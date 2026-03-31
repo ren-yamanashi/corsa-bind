@@ -5,7 +5,10 @@ import type { ApiClientOptions, ApiMode, ConfigResponse } from "@tsgo-rs/tsgo-rs
 import { TsgoApiClient } from "@tsgo-rs/tsgo-rs-node";
 
 export const workspaceRoot = resolve(import.meta.dirname, "../..");
-export const tsgoPath = resolve(workspaceRoot, ".cache/tsgo");
+export const tsgoPath = resolve(
+  workspaceRoot,
+  process.platform === "win32" ? ".cache/tsgo.exe" : ".cache/tsgo",
+);
 export const datasetPath = resolve(workspaceRoot, "ref/typescript-go/_packages/api/tsconfig.json");
 export const typescriptOxlintFixtureDir = resolve(
   workspaceRoot,
@@ -25,7 +28,9 @@ export function benchOptions(mode: ApiMode): ApiClientOptions {
 
 export function ensureBenchInputs(): void {
   if (!existsSync(tsgoPath)) {
-    throw new Error("missing .cache/tsgo; run `vp run -w build` or `vp run -w build_tsgo` first");
+    throw new Error(
+      "missing built tsgo binary under .cache; run `vp run -w build` or `vp run -w build_tsgo` first",
+    );
   }
   if (!existsSync(datasetPath)) {
     throw new Error("missing pinned tsgo dataset under ref/typescript-go");

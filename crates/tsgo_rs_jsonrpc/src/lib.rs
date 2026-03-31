@@ -9,7 +9,13 @@
 //! request/response channel, or for [`RawMessage`] and [`RequestId`] when you
 //! need to work at the protocol boundary directly.
 
-pub use tsgo_rs_core::{Result, RpcResponseError, TsgoError};
+pub mod observability {
+    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+}
+
+pub use tsgo_rs_core::{
+    Result, RpcResponseError, SharedObserver, TsgoError, TsgoEvent, TsgoObserver,
+};
 
 #[path = "jsonrpc/mod.rs"]
 /// JSON-RPC 2.0 message and connection primitives.

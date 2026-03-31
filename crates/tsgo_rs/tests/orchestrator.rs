@@ -3,20 +3,32 @@ mod support;
 use serde_json::{Value, json};
 use std::{
     sync::{
-        Arc,
+        Arc, Mutex,
         atomic::{AtomicUsize, Ordering},
     },
     time::Duration,
 };
+#[cfg(feature = "experimental-distributed")]
+use tsgo_rs::lsp::{VirtualChange, VirtualDocument};
+#[cfg(feature = "experimental-distributed")]
+use tsgo_rs::orchestrator::{DistributedApiOrchestrator, RaftCluster, ReplicatedCommand};
 use tsgo_rs::{
     api::{ApiClient, ApiMode, UpdateSnapshotParams},
-    lsp::{VirtualChange, VirtualDocument},
-    orchestrator::{
-        ApiOrchestrator, ApiOrchestratorConfig, DistributedApiOrchestrator, RaftCluster,
-        ReplicatedCommand,
-    },
+    observability::{TsgoEvent, TsgoObserver},
+    orchestrator::{ApiOrchestrator, ApiOrchestratorConfig},
     runtime::block_on,
 };
+
+#[derive(Default)]
+struct EventCollector {
+    events: Mutex<Vec<TsgoEvent>>,
+}
+
+impl TsgoObserver for EventCollector {
+    fn on_event(&self, event: &TsgoEvent) {
+        self.events.lock().unwrap().push(event.clone());
+    }
+}
 
 #[test]
 fn orchestrator_caches_snapshots_and_results() {
@@ -93,6 +105,7 @@ fn orchestrator_executes_parallel_batches() {
 }
 
 #[test]
+#[cfg(feature = "experimental-distributed")]
 fn raft_cluster_elects_a_leader_and_rejects_follower_writes() {
     let cluster = RaftCluster::new(["n1", "n2", "n3"]);
     let document =
@@ -133,6 +146,7 @@ fn raft_cluster_elects_a_leader_and_rejects_follower_writes() {
 }
 
 #[test]
+#[cfg(feature = "experimental-distributed")]
 fn distributed_orchestrator_replicates_virtual_documents_and_results() {
     block_on(async {
         let orchestrator = DistributedApiOrchestrator::new(["n1", "n2", "n3"]);
@@ -197,6 +211,7 @@ fn distributed_orchestrator_replicates_virtual_documents_and_results() {
 }
 
 #[test]
+#[cfg(feature = "experimental-distributed")]
 fn distributed_orchestrator_replicates_snapshot_records() {
     block_on(async {
         let orchestrator = DistributedApiOrchestrator::new(["leader", "follower-a", "follower-b"]);
@@ -231,6 +246,7 @@ fn orchestrator_enforces_cache_limits() {
             max_cached_snapshots: 1,
             max_cached_results: 1,
             work_queue_capacity: 2,
+            observer: None,
         });
         let profile = support::api_profile("limited-cache", ApiMode::AsyncJsonRpcStdio);
 
@@ -314,6 +330,73 @@ fn orchestrator_enforces_cache_limits() {
 }
 
 #[test]
+fn orchestrator_emits_eviction_events() {
+    block_on(async {
+        let observer = Arc::new(EventCollector::default());
+        let orchestrator = ApiOrchestrator::new(
+            ApiOrchestratorConfig {
+                max_workers_per_profile: 2,
+                max_cached_snapshots: 1,
+                max_cached_results: 1,
+                work_queue_capacity: 2,
+                observer: None,
+            }
+            .with_observer(observer.clone()),
+        );
+        let profile = support::api_profile("observed-cache", ApiMode::AsyncJsonRpcStdio);
+
+        let _ = orchestrator
+            .cached_snapshot(
+                &profile,
+                "workspace-a",
+                UpdateSnapshotParams {
+                    open_project: Some("/workspace/a/tsconfig.json".into()),
+                    file_changes: None,
+                },
+            )
+            .await
+            .unwrap();
+        let _ = orchestrator
+            .cached_snapshot(
+                &profile,
+                "workspace-b",
+                UpdateSnapshotParams {
+                    open_project: Some("/workspace/b/tsconfig.json".into()),
+                    file_changes: None,
+                },
+            )
+            .await
+            .unwrap();
+        let _: Value = orchestrator
+            .cached(
+                &profile,
+                "ping-a",
+                Some(Duration::from_secs(30)),
+                |client| async move { client.raw_json_request("ping", Value::Null).await },
+            )
+            .await
+            .unwrap();
+        let _: Value = orchestrator
+            .cached(
+                &profile,
+                "ping-b",
+                Some(Duration::from_secs(30)),
+                |client| async move { client.raw_json_request("ping", Value::Null).await },
+            )
+            .await
+            .unwrap();
+
+        let events = observer.events.lock().unwrap().clone();
+        assert!(events.contains(&TsgoEvent::OrchestratorSnapshotEvicted {
+            key: "workspace-a".into(),
+        }));
+        assert!(events.contains(&TsgoEvent::OrchestratorResultEvicted {
+            key: "ping-a".into(),
+        }));
+    });
+}
+
+#[test]
 fn orchestrator_rejects_worker_requests_above_limit() {
     block_on(async {
         let orchestrator = ApiOrchestrator::new(ApiOrchestratorConfig {
@@ -321,6 +404,7 @@ fn orchestrator_rejects_worker_requests_above_limit() {
             max_cached_snapshots: 4,
             max_cached_results: 4,
             work_queue_capacity: 4,
+            observer: None,
         });
         let profile = support::api_profile("limited-workers", ApiMode::AsyncJsonRpcStdio);
         let error = orchestrator.prewarm(&profile, 2).await.unwrap_err();

@@ -24,7 +24,12 @@ pub mod process {
     pub use tsgo_rs_core::{AsyncChildGuard, TsgoCommand};
 }
 
-pub use tsgo_rs_core::{Result, TsgoError};
+/// Re-exports structured operational events used by the LSP configs.
+pub mod observability {
+    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+}
+
+pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
 
 #[path = "lsp/mod.rs"]
 /// LSP client, overlay, and custom-request types.

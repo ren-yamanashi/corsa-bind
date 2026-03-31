@@ -70,6 +70,7 @@ impl ApiClient {
                     config.request_timeout,
                     config.shutdown_timeout,
                     config.outbound_capacity,
+                    config.observer.clone(),
                 )
                 .await?;
                 Arc::new(driver)
@@ -80,6 +81,7 @@ impl ApiClient {
                     config.filesystem.clone(),
                     config.request_timeout,
                     config.outbound_capacity,
+                    config.observer.clone(),
                 )?;
                 Arc::new(driver)
             }

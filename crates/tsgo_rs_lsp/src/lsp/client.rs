@@ -6,7 +6,10 @@ use crate::{
 use lsp_types::{notification::Notification, request::Request};
 use serde::{Serialize, de::DeserializeOwned};
 use std::{io::BufReader, path::PathBuf, sync::Arc, time::Duration};
-use tsgo_rs_core::fast::{CompactString, SmallVec};
+use tsgo_rs_core::{
+    SharedObserver,
+    fast::{CompactString, SmallVec},
+};
 use tsgo_rs_runtime::BroadcastReceiver;
 
 use super::{
@@ -39,7 +42,7 @@ pub struct LspClient {
 ///
 /// assert_eq!(config.extra_args.as_slice(), &["--logToFile"]);
 /// ```
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct LspSpawnConfig {
     /// Reusable command template used to launch `tsgo --lsp --stdio`.
     pub command: TsgoCommand,
@@ -51,6 +54,22 @@ pub struct LspSpawnConfig {
     pub shutdown_timeout: Duration,
     /// Maximum number of queued outbound transport messages.
     pub outbound_capacity: usize,
+    /// Optional observer for structured transport events.
+    pub observer: Option<SharedObserver>,
+}
+
+impl std::fmt::Debug for LspSpawnConfig {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("LspSpawnConfig")
+            .field("command", &self.command)
+            .field("extra_args", &self.extra_args)
+            .field("request_timeout", &self.request_timeout)
+            .field("shutdown_timeout", &self.shutdown_timeout)
+            .field("outbound_capacity", &self.outbound_capacity)
+            .field("observer", &self.observer.is_some())
+            .finish()
+    }
 }
 
 impl LspSpawnConfig {
@@ -62,6 +81,7 @@ impl LspSpawnConfig {
             request_timeout: Some(Duration::from_secs(30)),
             shutdown_timeout: Duration::from_secs(2),
             outbound_capacity: 256,
+            observer: None,
         }
     }
 
@@ -94,6 +114,12 @@ impl LspSpawnConfig {
         self.outbound_capacity = capacity.max(1);
         self
     }
+
+    /// Sets the observer used for structured transport events.
+    pub fn with_observer(mut self, observer: SharedObserver) -> Self {
+        self.observer = Some(observer);
+        self
+    }
 }
 
 impl LspClient {
@@ -118,7 +144,8 @@ impl LspClient {
                 Default::default(),
                 JsonRpcConnectionOptions::new()
                     .with_request_timeout(config.request_timeout)
-                    .with_outbound_capacity(config.outbound_capacity),
+                    .with_outbound_capacity(config.outbound_capacity)
+                    .with_observer_if_some(config.observer.clone()),
             ),
             process: Arc::new(AsyncChildGuard::new(child)),
             shutdown_timeout: config.shutdown_timeout,

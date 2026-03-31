@@ -60,9 +60,19 @@ jobs:
       - name: Test
         run: vp run -w test
 
-  tsgo-ref:
-    name: tsgo Ref
-    runs-on: ubuntu-latest
+      - name: Validate public facade without experimental features
+        run: cargo test -p tsgo-rs --no-default-features --test orchestrator
+
+  real-tsgo-smoke:
+    name: Real tsgo Smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -76,7 +86,7 @@ jobs:
       - name: Setup Go for pinned tsgo ref
         uses: actions/setup-go@v6
         with:
-          go-version: "1.26.0"
+          go-version-file: ref/typescript-go/go.mod
           cache: false
 
       - name: Setup Vite+
@@ -95,8 +105,46 @@ jobs:
       - name: Build pinned tsgo binary
         run: vp run -w build_tsgo
 
-      - name: Real tsgo regression tests
-        run: cargo test -p tsgo-rs --test real_tsgo_baseline --test real_tsgo_regression
+      - name: Real tsgo smoke tests
+        run: cargo test -p tsgo-rs --no-default-features --test real_tsgo_regression --test real_tsgo_typecheck
+
+  bench-tsgo-ref:
+    name: tsgo Ref Bench
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore Cargo cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Go for pinned tsgo ref
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: ref/typescript-go/go.mod
+          cache: false
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: lts
+          cache: true
+          run-install: true
+
+      - name: Sync pinned tsgo checkout
+        run: vp run -w sync_ref
+
+      - name: Verify pinned tsgo checkout
+        run: vp run -w verify_ref
+
+      - name: Build pinned tsgo binary
+        run: vp run -w build_tsgo
+
+      - name: Real tsgo baseline and regression tests
+        run: cargo test -p tsgo-rs --no-default-features --test real_tsgo_baseline --test real_tsgo_regression --test real_tsgo_typecheck
 
       - name: Benchmark guards
         run: vp run -w bench_verify

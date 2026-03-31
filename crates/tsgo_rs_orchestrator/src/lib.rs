@@ -8,7 +8,9 @@
 //! # Entry Points
 //!
 //! - [`ApiOrchestrator`] manages a local pool of API workers plus caches.
-//! - [`DistributedApiOrchestrator`] mirrors that state through an in-process
+//! - distributed replication is available only with the
+//!   `experimental-distributed` cargo feature.
+//! - `DistributedApiOrchestrator` mirrors that state through an in-process
 //!   Raft implementation for multi-node experiments and tests.
 
 /// Re-exports the typed stdio API client layer used by the orchestrators.
@@ -21,7 +23,12 @@ pub mod lsp {
     pub use tsgo_rs_lsp::*;
 }
 
-pub use tsgo_rs_core::{Result, TsgoError};
+/// Re-exports structured operational events used by the orchestrator configs.
+pub mod observability {
+    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+}
+
+pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
 
 #[path = "orchestrator/mod.rs"]
 /// Local and distributed orchestration helpers.
