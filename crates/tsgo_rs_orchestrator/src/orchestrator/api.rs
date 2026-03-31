@@ -13,7 +13,11 @@ use std::{
     thread,
     time::{Duration, Instant},
 };
-use tsgo_rs_core::fast::{CompactString, FastMap, SmallVec, compact_format};
+use tsgo_rs_core::{
+    SharedObserver, TsgoEvent,
+    fast::{CompactString, FastMap, SmallVec, compact_format},
+    observe,
+};
 use tsgo_rs_runtime::block_on;
 
 /// Local pool/cache orchestrator for multiple `tsgo` API workers.
@@ -28,7 +32,7 @@ use tsgo_rs_runtime::block_on;
 ///
 /// In other words, it optimizes for end-to-end workflow latency rather than
 /// trying to outperform `tsgo`'s own compiler internals directly.
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct ApiOrchestratorConfig {
     /// Maximum number of workers allowed in a single profile fleet.
     pub max_workers_per_profile: usize,
@@ -38,6 +42,8 @@ pub struct ApiOrchestratorConfig {
     pub max_cached_results: usize,
     /// Maximum number of work items buffered for a batch execution.
     pub work_queue_capacity: usize,
+    /// Optional observer for structured orchestrator events.
+    pub observer: Option<SharedObserver>,
 }
 
 impl Default for ApiOrchestratorConfig {
@@ -47,7 +53,29 @@ impl Default for ApiOrchestratorConfig {
             max_cached_snapshots: 64,
             max_cached_results: 256,
             work_queue_capacity: 256,
+            observer: None,
         }
+    }
+}
+
+impl ApiOrchestratorConfig {
+    /// Sets the observer used for structured orchestrator events.
+    pub fn with_observer(mut self, observer: SharedObserver) -> Self {
+        self.observer = Some(observer);
+        self
+    }
+}
+
+impl std::fmt::Debug for ApiOrchestratorConfig {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("ApiOrchestratorConfig")
+            .field("max_workers_per_profile", &self.max_workers_per_profile)
+            .field("max_cached_snapshots", &self.max_cached_snapshots)
+            .field("max_cached_results", &self.max_cached_results)
+            .field("work_queue_capacity", &self.work_queue_capacity)
+            .field("observer", &self.observer.is_some())
+            .finish()
     }
 }
 
@@ -319,6 +347,12 @@ impl ApiOrchestrator {
                 break;
             };
             if self.snapshots.write().remove(evicted.as_str()).is_some() {
+                observe(
+                    self.config.observer.as_ref(),
+                    TsgoEvent::OrchestratorSnapshotEvicted {
+                        key: evicted.clone(),
+                    },
+                );
                 warn!("evicted cached snapshot `{evicted}` to stay within configured limits");
             }
         }
@@ -333,6 +367,12 @@ impl ApiOrchestrator {
                 break;
             };
             if self.cached.write().remove(evicted.as_str()).is_some() {
+                observe(
+                    self.config.observer.as_ref(),
+                    TsgoEvent::OrchestratorResultEvicted {
+                        key: evicted.clone(),
+                    },
+                );
                 warn!("evicted cached result `{evicted}` to stay within configured limits");
             }
         }

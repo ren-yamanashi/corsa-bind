@@ -3,6 +3,7 @@ name = "tsgo-rs-ref"
 version = "0.1.0"
 edition = "2024"
 description = "Pinned upstream ref management and verification tooling for tsgo-rs"
+publish = false
 documentation.workspace = true
 homepage.workspace = true
 license.workspace = true
@@ -21,7 +22,7 @@ path = "src/main.rs"
 [dependencies]
 serde = { version = "1", features = ["derive"] }
 toml = "0.8"
-tsgo-rs-core = { path = "../tsgo_rs_core" }
+tsgo-rs-core = { version = "0.1.0", path = "../tsgo_rs_core" }
 
 [dev-dependencies]
 tempfile = "3"

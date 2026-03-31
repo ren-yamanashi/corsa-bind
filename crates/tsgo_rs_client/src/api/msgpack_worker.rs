@@ -15,8 +15,11 @@ use std::{
     thread,
     time::Duration,
 };
-use tsgo_rs_core::fast::{CompactString, compact_format};
-use tsgo_rs_core::terminate_child_process;
+use tsgo_rs_core::{
+    SharedObserver, TsgoEvent,
+    fast::{CompactString, compact_format},
+    observe, terminate_child_process,
+};
 
 use super::{
     callbacks::{ApiFileSystem, invoke_callback},
@@ -35,6 +38,7 @@ pub(crate) struct MsgpackWorker {
     join: Mutex<Option<thread::JoinHandle<()>>>,
     process: Arc<std::sync::Mutex<Option<Child>>>,
     request_timeout: Option<Duration>,
+    observer: Option<SharedObserver>,
 }
 
 /// Successful response returned from the worker thread.
@@ -58,6 +62,7 @@ impl MsgpackWorker {
         filesystem: Option<Arc<dyn ApiFileSystem>>,
         request_timeout: Option<Duration>,
         queue_capacity: usize,
+        observer: Option<SharedObserver>,
     ) -> Result<Self> {
         let stdin = child
             .stdin
@@ -99,9 +104,9 @@ impl MsgpackWorker {
                 }
             }
             if let Ok(mut child) = worker_process.lock()
-                && let Some(child) = child.as_mut()
+                && let Some(mut child) = child.take()
             {
-                let _ = terminate_child_process(child);
+                let _ = terminate_child_process(&mut child);
             }
         });
         Ok(Self {
@@ -109,6 +114,7 @@ impl MsgpackWorker {
             join: Mutex::new(Some(join)),
             process,
             request_timeout,
+            observer,
         })
     }
 
@@ -128,6 +134,12 @@ impl MsgpackWorker {
         }) {
             Ok(()) => {}
             Err(mpsc::TrySendError::Full(_)) => {
+                observe(
+                    self.observer.as_ref(),
+                    TsgoEvent::MsgpackWorkerQueueFull {
+                        method: CompactString::from(method),
+                    },
+                );
                 return Err(TsgoError::Protocol("msgpack worker queue is full".into()));
             }
             Err(mpsc::TrySendError::Disconnected(_)) => {
@@ -137,7 +149,14 @@ impl MsgpackWorker {
         let response = if let Some(timeout) = self.request_timeout {
             reply_rx.recv_timeout(timeout).map_err(|_| {
                 warn!("msgpack request `{method}` timed out; terminating worker");
-                self.terminate_process();
+                observe(
+                    self.observer.as_ref(),
+                    TsgoEvent::MsgpackRequestTimedOut {
+                        method: CompactString::from(method),
+                        timeout,
+                    },
+                );
+                self.terminate_process("request timeout");
                 TsgoError::timeout(
                     compact_format(format_args!("msgpack request `{method}`")).as_str(),
                     timeout,
@@ -155,7 +174,7 @@ impl MsgpackWorker {
         if let Some(sender) = self.tx.lock().take() {
             let _ = sender.try_send(WorkerCommand::Shutdown);
         }
-        self.terminate_process();
+        self.terminate_process("close");
         if let Some(join) = self.join.lock().take() {
             join.join()
                 .map_err(|_| TsgoError::Join("msgpack worker".into()))?;
@@ -163,11 +182,17 @@ impl MsgpackWorker {
         Ok(())
     }
 
-    fn terminate_process(&self) {
+    fn terminate_process(&self, reason: &str) {
         if let Ok(mut child) = self.process.lock()
-            && let Some(child) = child.as_mut()
+            && let Some(mut child) = child.take()
         {
-            let _ = terminate_child_process(child);
+            let _ = terminate_child_process(&mut child);
+            observe(
+                self.observer.as_ref(),
+                TsgoEvent::MsgpackWorkerTerminated {
+                    reason: CompactString::from(reason),
+                },
+            );
         }
     }
 }

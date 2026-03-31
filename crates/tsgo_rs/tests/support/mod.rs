@@ -53,15 +53,24 @@ pub fn resolved_real_tsgo_binary() -> Option<PathBuf> {
     }
     [
         workspace_root().join(".cache/tsgo"),
+        workspace_root().join(".cache/tsgo.exe"),
         workspace_root().join("ref/typescript-go/.cache/tsgo"),
+        workspace_root().join("ref/typescript-go/.cache/tsgo.exe"),
         workspace_root().join("ref/typescript-go/built/local/tsgo"),
+        workspace_root().join("ref/typescript-go/built/local/tsgo.exe"),
     ]
     .into_iter()
     .find(|path| path.exists())
 }
 
 pub fn real_tsgo_binary() -> PathBuf {
-    resolved_real_tsgo_binary().unwrap_or_else(|| workspace_root().join(".cache/tsgo"))
+    resolved_real_tsgo_binary().unwrap_or_else(|| {
+        workspace_root().join(if cfg!(windows) {
+            ".cache/tsgo.exe"
+        } else {
+            ".cache/tsgo"
+        })
+    })
 }
 
 pub fn real_dataset() -> PathBuf {

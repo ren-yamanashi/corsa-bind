@@ -3,9 +3,14 @@ name = "tsgo-rs-node"
 version = "0.1.0"
 edition = "2024"
 license.workspace = true
+publish = false
 
 [lib]
 crate-type = ["cdylib"]
+
+[features]
+default = []
+experimental-distributed = ["tsgo-rs/experimental-distributed"]
 
 [dependencies]
 lsp-types = "0.97"
@@ -13,7 +18,7 @@ napi = { version = "2", default-features = false, features = ["napi4"] }
 napi-derive = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tsgo-rs = { path = "../../crates/tsgo_rs" }
+tsgo-rs = { version = "0.1.0", path = "../../crates/tsgo_rs", features = ["experimental-distributed"] }
 
 [build-dependencies]
 napi-build = "2"

@@ -5,7 +5,8 @@ Rust bindings, orchestration layers, and Node bindings for `typescript-go` over 
 > [!WARNING]
 > This repository is still evolving.
 > The local Rust and Node API/LSP surfaces are now hardened for production-style use,
-> but distributed orchestration and some upstream-facing endpoints remain explicitly experimental.
+> but distributed orchestration remains behind the `experimental-distributed`
+> cargo feature and some upstream-facing endpoints remain explicitly experimental.
 
 > [!IMPORTANT]
 > `tsgo-rs` is intentionally built around upstream-supported `typescript-go`
@@ -32,7 +33,7 @@ Current focus:
 - stdio LSP bindings with virtual-file support
 - zero-cost-lean hot paths with msgpack-first defaults
 - `napi-rs` bindings that surface Rust performance to JS/TS authoring workflows
-- multi-process orchestration, cache reuse, and replicated state
+- local multi-process orchestration, cache reuse, and experimental replicated state
 - strict upstream pinning by exact `typescript-go` commit
 - regression tests and benchmarks against the real pinned upstream server
 
@@ -44,12 +45,14 @@ Current focus:
 - Runtime: custom in-house runtime, no `tokio`
 - Fast-path bias: `CompactString`, `SmallVec`, `bumpalo`, `memchr`, `phf`, `FxHash`
 - JS toolchain: `pnpm` + Vite+ (`vp`) with `oxfmt` / `oxlint`
-- Node bindings: `npm/tsgo_rs_node` (`ESM-only` public JS surface)
+- Node bindings: `npm/tsgo_rs_node` (repository-local `ESM-only` JS surface; npm publish remains private)
+- Distributed orchestration: `experimental-distributed` cargo feature
 - TS benchmark project: `bench`
 - Default request timeout: `30s`
 - Default graceful shutdown timeout: `2s`
 - Default outbound queue capacity: `256`
 - Unstable upstream endpoints such as `printNode` are opt-in
+- Structured event sink: `TsgoObserver` / `TsgoEvent`
 
 Pinned upstream at the time of writing:
 
@@ -63,7 +66,7 @@ Pinned upstream at the time of writing:
 - `tsgo-rs-jsonrpc`: stdio JSON-RPC framing and connection management
 - `tsgo-rs-client`: typed tsgo stdio client bindings for JSON-RPC and msgpack
 - `tsgo-rs-lsp`: LSP client support plus virtual-document overlays
-- `tsgo-rs-orchestrator`: local orchestration, caching, replicated state, and Raft core
+- `tsgo-rs-orchestrator`: local orchestration, caching, and experimental replicated state / Raft core
 - `tsgo-rs-runtime`: lightweight custom runtime and task primitives
 - `tsgo-rs-ref`: exact upstream pin, sync, and verification tooling
 - `tsgo-rs`: top-level facade crate, mock server, and native benchmark binaries
@@ -73,6 +76,9 @@ Pinned upstream at the time of writing:
 
 For a detailed architecture walkthrough, design strategy, and implementation tips, see [docs/project_guide.md](./docs/project_guide.md).
 For deployment-oriented defaults, supported scope, and release checks, see [docs/production_readiness.md](./docs/production_readiness.md).
+For support guarantees, compatibility, and semver expectations, see [docs/support_policy.md](./docs/support_policy.md).
+For distribution decisions and release dry-runs, see [docs/release_guide.md](./docs/release_guide.md).
+For dependency-policy and release-hardening expectations, see [docs/supply_chain_policy.md](./docs/supply_chain_policy.md).
 
 ## Quick Start
 

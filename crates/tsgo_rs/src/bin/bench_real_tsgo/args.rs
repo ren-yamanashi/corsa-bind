@@ -100,15 +100,22 @@ fn both_modes() -> SmallVec<[ApiMode; 2]> {
 fn default_tsgo_path(root_dir: &std::path::Path) -> PathBuf {
     let candidates = [
         root_dir.join(".cache/tsgo"),
+        root_dir.join(".cache/tsgo.exe"),
         root_dir.join("ref/typescript-go/.cache/tsgo"),
+        root_dir.join("ref/typescript-go/.cache/tsgo.exe"),
         root_dir.join("ref/typescript-go/built/local/tsgo"),
+        root_dir.join("ref/typescript-go/built/local/tsgo.exe"),
     ];
     for candidate in candidates {
         if candidate.exists() {
             return candidate;
         }
     }
-    root_dir.join(".cache/tsgo")
+    root_dir.join(if cfg!(windows) {
+        ".cache/tsgo.exe"
+    } else {
+        ".cache/tsgo"
+    })
 }
 
 fn default_datasets(root_dir: &std::path::Path) -> SmallVec<[PathBuf; 4]> {

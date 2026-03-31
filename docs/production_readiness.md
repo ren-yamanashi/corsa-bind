@@ -12,7 +12,7 @@ The current production target is:
 
 The following remains experimental:
 
-- distributed orchestration
+- the `experimental-distributed` cargo feature
 - the in-process Raft replication layer
 - upstream endpoints called out as unstable by this repository
 
@@ -38,6 +38,7 @@ For long-lived services:
 - keep `request_timeout` enabled
 - reduce `outbound_capacity` if you prefer earlier backpressure
 - tune `max_cached_snapshots` and `max_cached_results` to fit process memory budgets
+- wire a `TsgoObserver` into spawn/orchestrator configs so timeouts and evictions reach your telemetry stack
 - leave unstable upstream endpoints disabled unless you have a concrete need and a rollback plan
 
 For editor-like integrations:
@@ -50,10 +51,13 @@ For editor-like integrations:
 
 - `vp check`
 - `cargo clippy --workspace --all-targets -- -D warnings`
-- `cargo test --workspace`
 - `vp run -w test`
+- `cargo test -p tsgo-rs --no-default-features --test orchestrator`
+- `cargo test -p tsgo-rs --features experimental-distributed --test orchestrator`
 - `vp run -w bench_verify`
 - `vp run -w verify_ref`
+- `cargo deny check advisories bans licenses sources`
+- `vp run -w release_dry_run`
 
 ## Cross-Platform Expectations
 
@@ -63,4 +67,5 @@ The main quality workflow is intended to stay green on:
 - macOS
 - Windows
 
-The pinned real-`tsgo` integration and benchmark verification currently remain concentrated in the dedicated `tsgo-ref` job.
+Real `tsgo` smoke coverage now runs across the supported OS matrix, while the
+heavier benchmark verification remains concentrated in the Ubuntu benchmark job.

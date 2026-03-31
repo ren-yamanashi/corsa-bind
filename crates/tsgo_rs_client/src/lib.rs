@@ -38,7 +38,12 @@ pub mod process {
     pub use tsgo_rs_core::{AsyncChildGuard, TsgoCommand};
 }
 
-pub use tsgo_rs_core::{Result, TsgoError};
+/// Re-exports structured operational events used by the client configs.
+pub mod observability {
+    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+}
+
+pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
 
 #[path = "api/mod.rs"]
 /// Typed bindings for the `tsgo` stdio API surface.

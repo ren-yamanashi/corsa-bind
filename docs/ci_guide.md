@@ -29,10 +29,11 @@ It means several layers agree on:
 
 The workflow lives in [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
-It currently has two jobs:
+It currently has three CI jobs in the main workflow:
 
 - `quality`
-- `tsgo-ref`
+- `real-tsgo-smoke`
+- `bench-tsgo-ref`
 
 ## `quality`
 
@@ -55,14 +56,13 @@ vp run -w build
 vp run -w test
 ```
 
-## `tsgo-ref`
+## `real-tsgo-smoke`
 
-The `tsgo-ref` job answers:
+The `real-tsgo-smoke` job answers:
 
 - is the pinned upstream checkout exactly where the lockfile says it should be?
 - can the pinned upstream `tsgo` binary actually build?
-- do real-server regression tests pass against that binary?
-- can benchmark reports be regenerated and validated?
+- do real-server smoke and typecheck tests pass against that binary on every supported OS?
 
 The important commands are:
 
@@ -70,9 +70,16 @@ The important commands are:
 vp run -w sync_ref
 vp run -w verify_ref
 vp run -w build_tsgo
-cargo test -p tsgo-rs --test real_tsgo_baseline --test real_tsgo_regression
-vp run -w bench_verify
+cargo test -p tsgo-rs --no-default-features --test real_tsgo_regression --test real_tsgo_typecheck
 ```
+
+## `bench-tsgo-ref`
+
+The `bench-tsgo-ref` job keeps the heavier Ubuntu-only path:
+
+- baseline validation against the pinned upstream server
+- benchmark report regeneration
+- benchmark guard validation
 
 ## Local Reproduction
 

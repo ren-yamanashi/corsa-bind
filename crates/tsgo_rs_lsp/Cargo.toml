@@ -19,6 +19,6 @@ log = { workspace = true }
 lsp-types = "0.97"
 parking_lot = "0.12"
 serde = { version = "1", features = ["derive"] }
-tsgo-rs-core = { path = "../tsgo_rs_core" }
-tsgo-rs-jsonrpc = { path = "../tsgo_rs_jsonrpc" }
-tsgo-rs-runtime = { path = "../tsgo_rs_runtime" }
+tsgo-rs-core = { version = "0.1.0", path = "../tsgo_rs_core" }
+tsgo-rs-jsonrpc = { version = "0.1.0", path = "../tsgo_rs_jsonrpc" }
+tsgo-rs-runtime = { version = "0.1.0", path = "../tsgo_rs_runtime" }

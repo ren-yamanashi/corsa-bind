@@ -26,6 +26,7 @@ pub(super) async fn spawn_jsonrpc_stdio(
     request_timeout: Option<std::time::Duration>,
     shutdown_timeout: std::time::Duration,
     outbound_capacity: usize,
+    observer: Option<tsgo_rs_core::SharedObserver>,
 ) -> Result<ClientDriver> {
     // JSON-RPC mode is used for callback-capable, async request/response
     // flows. The worker process is wrapped in `AsyncChildGuard` so shutdown
@@ -41,7 +42,8 @@ pub(super) async fn spawn_jsonrpc_stdio(
         handlers,
         JsonRpcConnectionOptions::new()
             .with_request_timeout(request_timeout)
-            .with_outbound_capacity(outbound_capacity),
+            .with_outbound_capacity(outbound_capacity)
+            .with_observer_if_some(observer),
     );
     Ok(ClientDriver::JsonRpc {
         rpc,
@@ -55,6 +57,7 @@ pub(super) fn spawn_msgpack_stdio(
     filesystem: Option<Arc<dyn super::ApiFileSystem>>,
     request_timeout: Option<std::time::Duration>,
     outbound_capacity: usize,
+    observer: Option<tsgo_rs_core::SharedObserver>,
 ) -> Result<ClientDriver> {
     // Msgpack mode keeps a dedicated worker thread around the blocking stdio
     // pipes. This avoids async framing overhead on the hot path.
@@ -65,6 +68,7 @@ pub(super) fn spawn_msgpack_stdio(
         filesystem,
         request_timeout,
         outbound_capacity,
+        observer,
     )?;
     Ok(ClientDriver::Msgpack {
         worker: Arc::new(worker),

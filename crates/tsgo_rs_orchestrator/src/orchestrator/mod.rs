@@ -1,19 +1,25 @@
 //! Orchestrator implementations and replicated-state data models.
 //!
-//! This module contains both the local worker pool and the experimental
-//! distributed orchestration layer that mirrors cache and virtual-document state
-//! through an in-process Raft core.
+//! This module always includes the local worker pool.
+//! The distributed orchestration layer is compiled only when the
+//! `experimental-distributed` cargo feature is enabled.
 
 mod api;
+#[cfg(feature = "experimental-distributed")]
 mod distributed;
+#[cfg(feature = "experimental-distributed")]
 mod raft;
+#[cfg(feature = "experimental-distributed")]
 mod state;
 
 /// Local worker-pool orchestrator with snapshot and result caches.
 pub use api::{ApiOrchestrator, ApiOrchestratorConfig, ApiOrchestratorStats};
 /// Distributed wrapper that replicates overlay and cache state.
+#[cfg(feature = "experimental-distributed")]
 pub use distributed::DistributedApiOrchestrator;
 /// Raft topology and leadership state used by the distributed orchestrator.
+#[cfg(feature = "experimental-distributed")]
 pub use raft::{RaftCluster, RaftRole};
 /// Serializable state mirrored across the distributed orchestrator cluster.
+#[cfg(feature = "experimental-distributed")]
 pub use state::{ReplicatedCacheEntry, ReplicatedCommand, ReplicatedSnapshot, ReplicatedState};

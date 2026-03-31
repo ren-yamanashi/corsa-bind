@@ -6,7 +6,9 @@
 //! - [`api`] for the tsgo API bindings
 //! - [`jsonrpc`] for stdio JSON-RPC framing and transport
 //! - [`lsp`] for LSP clients and virtual-document overlays
-//! - [`orchestrator`] for local and replicated client orchestration
+//! - [`orchestrator`] for local orchestration plus optional experimental
+//!   distributed helpers
+//! - [`observability`] for structured runtime events
 //! - [`runtime`] for the lightweight in-house executor
 //!
 //! # Examples
@@ -55,9 +57,19 @@ pub mod lsp {
     pub use tsgo_rs_lsp::*;
 }
 
+/// Re-exports structured operational events used across the workspace.
+pub mod observability {
+    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+}
+
 /// Re-exports client orchestration and replicated-state helpers.
 pub mod orchestrator {
-    pub use tsgo_rs_orchestrator::*;
+    pub use tsgo_rs_orchestrator::{ApiOrchestrator, ApiOrchestratorConfig, ApiOrchestratorStats};
+    #[cfg(feature = "experimental-distributed")]
+    pub use tsgo_rs_orchestrator::{
+        DistributedApiOrchestrator, RaftCluster, RaftRole, ReplicatedCacheEntry, ReplicatedCommand,
+        ReplicatedSnapshot, ReplicatedState,
+    };
 }
 
 /// Re-exports process spawning primitives.
@@ -70,4 +82,4 @@ pub mod runtime {
     pub use tsgo_rs_runtime::*;
 }
 
-pub use tsgo_rs_core::{Result, TsgoError};
+pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};

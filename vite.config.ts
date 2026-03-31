@@ -80,9 +80,7 @@ export default defineConfig({
         command: "cargo build -p tsgo-rs --bin mock_tsgo",
       },
       build_tsgo: {
-        command:
-          'mkdir -p ../../.cache/go-build && GOCACHE="$PWD/../../.cache/go-build" go build -o ../../.cache/tsgo ./cmd/tsgo',
-        cwd: "ref/typescript-go",
+        command: "node ./scripts/build_tsgo.mjs",
       },
       build_node_debug: {
         command: "napi build --platform",
@@ -116,10 +114,17 @@ export default defineConfig({
       },
       test: {
         command: noopCommand,
-        dependsOn: ["test_rust", "test_ts"],
+        dependsOn: ["test_rust", "test_rust_experimental", "test_ts"],
       },
       test_rust: {
         command: "cargo test --workspace",
+      },
+      test_rust_experimental: {
+        command: "cargo test -p tsgo-rs --no-default-features --test orchestrator",
+        dependsOn: ["test_rust_experimental_feature"],
+      },
+      test_rust_experimental_feature: {
+        command: "cargo test -p tsgo-rs --features experimental-distributed --test orchestrator",
       },
       test_ts: {
         command: "vp test run --config ./vite.config.ts",
@@ -164,6 +169,10 @@ export default defineConfig({
         command:
           "TSGO_REQUIRE_BENCH_REPORTS=1 vp test run --config ./vite.config.ts bench/src/report_guard.test.ts",
         dependsOn: ["bench_native", "bench_ts"],
+      },
+      release_dry_run: {
+        command: "node ./scripts/release_dry_run.mjs",
+        dependsOn: ["build"],
       },
     },
   },

@@ -2,7 +2,7 @@ use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use super::ApiFileSystem;
 use crate::process::TsgoCommand;
-use tsgo_rs_core::fast::CompactString;
+use tsgo_rs_core::{SharedObserver, fast::CompactString};
 
 /// Transport mode used to talk to the tsgo API.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -50,6 +50,8 @@ pub struct ApiSpawnConfig {
     pub outbound_capacity: usize,
     /// Allows calls to upstream endpoints that are known to be unstable.
     pub allow_unstable_upstream_calls: bool,
+    /// Optional observer for structured transport events.
+    pub observer: Option<SharedObserver>,
 }
 
 impl ApiSpawnConfig {
@@ -66,6 +68,7 @@ impl ApiSpawnConfig {
             shutdown_timeout: Duration::from_secs(2),
             outbound_capacity: 256,
             allow_unstable_upstream_calls: false,
+            observer: None,
         }
     }
 
@@ -108,6 +111,12 @@ impl ApiSpawnConfig {
     /// Allows calls to upstream endpoints marked unstable by this crate.
     pub fn with_allow_unstable_upstream_calls(mut self, allow: bool) -> Self {
         self.allow_unstable_upstream_calls = allow;
+        self
+    }
+
+    /// Sets the observer used for structured transport events.
+    pub fn with_observer(mut self, observer: SharedObserver) -> Self {
+        self.observer = Some(observer);
         self
     }
 }

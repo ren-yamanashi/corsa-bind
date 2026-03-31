@@ -2,8 +2,14 @@
 
 ## Supported Versions
 
-The repository currently supports the latest code on `main`.
-Because `tsgo-rs` is still in the `0.x` phase, older tags should not be assumed to receive security fixes.
+See [docs/support_policy.md](./docs/support_policy.md) for the full support
+matrix and compatibility policy.
+
+In short:
+
+- `main` receives fixes first
+- the latest supported `0.x` release line is the intended external support target
+- older tags should not be assumed to receive security fixes
 
 ## Reporting a Vulnerability
 

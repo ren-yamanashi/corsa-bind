@@ -13,8 +13,8 @@ use std::{
     thread,
     time::Duration,
 };
-use tsgo_rs_core::fast::compact_format;
 use tsgo_rs_core::fast::{CompactString, FastMap};
+use tsgo_rs_core::{SharedObserver, TsgoEvent, fast::compact_format, observe};
 use tsgo_rs_runtime::{BroadcastReceiver, BroadcastSender, broadcast};
 
 use super::{
@@ -50,12 +50,14 @@ pub enum InboundEvent {
 }
 
 /// Runtime policy applied to a [`JsonRpcConnection`].
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone)]
 pub struct JsonRpcConnectionOptions {
     /// Maximum time to wait for a response before surfacing a timeout.
     pub request_timeout: Option<Duration>,
     /// Maximum number of queued outbound messages waiting on the writer thread.
     pub outbound_capacity: usize,
+    /// Optional observer for structured transport events.
+    pub observer: Option<SharedObserver>,
 }
 
 impl JsonRpcConnectionOptions {
@@ -75,6 +77,18 @@ impl JsonRpcConnectionOptions {
         self.outbound_capacity = capacity.max(1);
         self
     }
+
+    /// Sets the observer used for structured transport events.
+    pub fn with_observer(mut self, observer: SharedObserver) -> Self {
+        self.observer = Some(observer);
+        self
+    }
+
+    /// Sets the observer when one is available.
+    pub fn with_observer_if_some(mut self, observer: Option<SharedObserver>) -> Self {
+        self.observer = observer;
+        self
+    }
 }
 
 impl Default for JsonRpcConnectionOptions {
@@ -82,7 +96,19 @@ impl Default for JsonRpcConnectionOptions {
         Self {
             request_timeout: Some(Duration::from_secs(30)),
             outbound_capacity: 256,
+            observer: None,
         }
+    }
+}
+
+impl std::fmt::Debug for JsonRpcConnectionOptions {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("JsonRpcConnectionOptions")
+            .field("request_timeout", &self.request_timeout)
+            .field("outbound_capacity", &self.outbound_capacity)
+            .field("observer", &self.observer.is_some())
+            .finish()
     }
 }
 
@@ -103,6 +129,7 @@ struct Inner {
     closed: AtomicBool,
     next_id: AtomicI64,
     request_timeout: Option<Duration>,
+    observer: Option<SharedObserver>,
     events: BroadcastSender<InboundEvent>,
     handlers: RpcHandlerMap,
     outbound: Mutex<Option<mpsc::SyncSender<RawMessage>>>,
@@ -145,6 +172,7 @@ impl JsonRpcConnection {
             closed: AtomicBool::new(false),
             next_id: AtomicI64::new(0),
             request_timeout: options.request_timeout,
+            observer: options.observer.clone(),
             events,
             handlers,
             outbound: Mutex::new(Some(outbound_tx)),
@@ -200,6 +228,13 @@ impl JsonRpcConnection {
         if let Some(timeout) = self.inner.request_timeout {
             return rx.recv_timeout(timeout).map_err(|_| {
                 self.inner.pending.lock().remove(&id);
+                observe(
+                    self.inner.observer.as_ref(),
+                    TsgoEvent::JsonRpcRequestTimedOut {
+                        method: CompactString::from(method),
+                        timeout,
+                    },
+                );
                 TsgoError::timeout(
                     compact_format(format_args!("jsonrpc request `{method}`")).as_str(),
                     timeout,
@@ -345,6 +380,7 @@ impl Inner {
         {
             Ok(()) => Ok(()),
             Err(TrySendError::Full(_)) => {
+                observe(self.observer.as_ref(), TsgoEvent::JsonRpcOutboundQueueFull);
                 Err(TsgoError::Protocol("jsonrpc outbound queue is full".into()))
             }
             Err(TrySendError::Disconnected(_)) => Err(TsgoError::Closed("jsonrpc writer")),
@@ -355,7 +391,18 @@ impl Inner {
         if !matches!(error, TsgoError::Closed(_)) {
             warn!("jsonrpc transport failing pending requests: {error}");
         }
-        for (_, tx) in self.pending.lock().drain() {
+        let mut pending = self.pending.lock();
+        let count = pending.len();
+        if count > 0 {
+            observe(
+                self.observer.as_ref(),
+                TsgoEvent::JsonRpcPendingRequestsFailed {
+                    error: CompactString::from(error.to_string().as_str()),
+                    count,
+                },
+            );
+        }
+        for (_, tx) in pending.drain() {
             let _ = tx.send(Err(error.clone_for_pending()));
         }
     }

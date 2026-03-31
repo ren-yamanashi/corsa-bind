@@ -19,6 +19,15 @@ use std::{
 /// are usually short-lived control flows rather than large, highly concurrent
 /// task graphs.
 ///
+/// # Safety invariants
+///
+/// The custom `RawWaker` implementation below relies on three invariants:
+///
+/// - every raw pointer stored in the waker originates from `Arc<Parker>::into_raw`
+/// - `clone`, `wake`, `wake_by_ref`, and `drop` balance the `Arc` strong count
+/// - the parker's notification bit is cleared only immediately before polling,
+///   so wake-ups emitted during or after the poll are still observed by `park`
+///
 /// # Panics
 ///
 /// Panics if writing wake-up state into the internal synchronization primitives
@@ -127,10 +136,79 @@ static VTABLE: RawWakerVTable =
 #[cfg(test)]
 mod tests {
     use super::block_on;
+    use std::{
+        future::Future,
+        pin::Pin,
+        sync::{
+            Arc,
+            atomic::{AtomicBool, Ordering},
+        },
+        task::{Context, Poll},
+        thread,
+        time::Duration,
+    };
 
     #[test]
     fn block_on_runs_ready_future() {
         let value = block_on(async { 42 });
         assert_eq!(value, 42);
+    }
+
+    #[test]
+    fn block_on_observes_cross_thread_wakes() {
+        struct ThreadWakeFuture {
+            started: bool,
+            ready: Arc<AtomicBool>,
+        }
+
+        impl Future for ThreadWakeFuture {
+            type Output = u32;
+
+            fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+                if self.ready.load(Ordering::SeqCst) {
+                    return Poll::Ready(7);
+                }
+                if !self.started {
+                    self.started = true;
+                    let ready = Arc::clone(&self.ready);
+                    let waker = cx.waker().clone();
+                    thread::spawn(move || {
+                        thread::sleep(Duration::from_millis(5));
+                        ready.store(true, Ordering::SeqCst);
+                        waker.wake();
+                    });
+                }
+                Poll::Pending
+            }
+        }
+
+        let value = block_on(ThreadWakeFuture {
+            started: false,
+            ready: Arc::new(AtomicBool::new(false)),
+        });
+        assert_eq!(value, 7);
+    }
+
+    #[test]
+    fn block_on_handles_repeated_wake_by_ref_cycles() {
+        struct SelfWakingFuture {
+            remaining: usize,
+        }
+
+        impl Future for SelfWakingFuture {
+            type Output = usize;
+
+            fn poll(mut self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+                if self.remaining == 0 {
+                    return Poll::Ready(123);
+                }
+                self.remaining -= 1;
+                cx.waker().wake_by_ref();
+                Poll::Pending
+            }
+        }
+
+        let value = block_on(SelfWakingFuture { remaining: 256 });
+        assert_eq!(value, 123);
     }
 }

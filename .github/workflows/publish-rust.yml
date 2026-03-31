@@ -1,0 +1,96 @@
+name: Publish Rust
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type `publish-rust` to continue
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-rust
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release-gates:
+    if: ${{ inputs.confirm == 'publish-rust' }}
+    name: Release Gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Restore Cargo cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Go for pinned tsgo ref
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: ref/typescript-go/go.mod
+          cache: false
+
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: lts
+          cache: true
+          run-install: true
+
+      - name: Check JS and TS
+        run: vp check
+
+      - name: Check Rust formatting
+        run: vp run -w fmt_check_rust
+
+      - name: Lint Rust
+        run: vp run -w lint_rust
+
+      - name: Test
+        run: vp run -w test
+
+      - name: Verify pinned tsgo checkout
+        run: vp run -w verify_ref
+
+      - name: Benchmark guards
+        run: vp run -w bench_verify
+
+      - name: Cargo deny
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories bans licenses sources
+
+      - name: Release dry run
+        run: vp run -w release_dry_run
+
+  publish:
+    if: ${{ inputs.confirm == 'publish-rust' }}
+    name: Publish Rust Crates
+    needs:
+      - release-gates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Restore Cargo cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Publish ordered crates
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: node ./scripts/publish_rust.mjs
