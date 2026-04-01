@@ -1,11 +1,15 @@
-use crate::{Result, TsgoError, jsonrpc::JsonRpcConnection};
+use crate::{Result, TsgoError};
 use parking_lot::Mutex;
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::{Value, json};
+use std::sync::Arc;
+
+#[cfg(unix)]
+use crate::jsonrpc::JsonRpcConnection;
+#[cfg(unix)]
 use std::{
     io::{BufReader, BufWriter},
     path::PathBuf,
-    sync::Arc,
 };
 
 use super::{
