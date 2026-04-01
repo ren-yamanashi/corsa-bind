@@ -45,9 +45,11 @@ Current focus:
 - Runtime: custom in-house runtime, no `tokio`
 - Fast-path bias: `CompactString`, `SmallVec`, `bumpalo`, `memchr`, `phf`, `FxHash`
 - JS toolchain: `pnpm` + Vite+ (`vp`) with `oxfmt` / `oxlint`
+- Repo automation: `scripts/*.ts` executed directly through Node `24` with `--strip-types`
 - Node bindings: `@tsgo-rs/node` (`npm/tsgo_rs_node`) and `npm/typescript_oxlint` (public npm packages that still expect a caller-managed `typescript-go` executable)
 - Distributed orchestration: `experimental-distributed` cargo feature
 - TS benchmark project: `bench`
+- Example workspace: `examples`
 - Default request timeout: `30s`
 - Default graceful shutdown timeout: `2s`
 - Default outbound queue capacity: `256`
@@ -73,6 +75,7 @@ Pinned upstream at the time of writing:
 - `npm/tsgo_rs_node`: `napi-rs` native bindings and the `@tsgo-rs/node` TypeScript wrapper package
 - `npm/typescript_oxlint`: `typescript-eslint`-style compatibility layer for type-aware Oxlint JS plugins
 - `bench`: Vitest benchmark project for the Node binding
+- `examples`: executable Node binding samples plus `typescript-oxlint` rule/config examples
 
 For a detailed architecture walkthrough, design strategy, and implementation tips, see [docs/project_guide.md](./docs/project_guide.md).
 For deployment-oriented defaults, supported scope, and release checks, see [docs/production_readiness.md](./docs/production_readiness.md).
@@ -95,6 +98,30 @@ Install JS dependencies and build everything through Vite Task:
 vp install
 vp run -w build
 vp check
+```
+
+Repository automation scripts now assume Node `24` so they can run TypeScript
+directly through `node --strip-types`. The published npm packages themselves
+still target Node `22+`.
+
+## Examples
+
+The repository now ships executable examples for both `@tsgo-rs/node` and
+`typescript-oxlint` under [`examples/`](./examples/README.md).
+
+Run the smoke-tested examples with:
+
+```bash
+vp run -w examples_smoke
+```
+
+Run the real pinned-`tsgo` snapshot example with:
+
+```bash
+vp run -w sync_ref
+vp run -w verify_ref
+vp run -w build_tsgo
+pnpm --dir examples run real-snapshot
 ```
 
 ## Type-Aware Oxlint

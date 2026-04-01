@@ -170,4 +170,4 @@ jobs:
         env:
           NAPI_ARTIFACTS_DIR: artifacts
           NAPI_REQUIRE_ALL_TARGETS: "1"
-        run: node ./scripts/publish_npm.mjs
+        run: node --strip-types ./scripts/publish_npm.ts

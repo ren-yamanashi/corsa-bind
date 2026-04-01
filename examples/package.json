@@ -1,0 +1,19 @@
+{
+  "name": "tsgo-rs-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "node --strip-types ./smoke.ts",
+    "mock-client": "node --strip-types ./node/mock_client.ts",
+    "virtual-document": "node --strip-types ./node/virtual_document.ts",
+    "distributed-orchestrator": "node --strip-types ./node/distributed_orchestrator.ts",
+    "real-snapshot": "node --strip-types ./node/real_snapshot.ts"
+  },
+  "dependencies": {
+    "@tsgo-rs/node": "workspace:*",
+    "typescript-oxlint": "workspace:*"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

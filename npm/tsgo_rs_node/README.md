@@ -21,3 +21,7 @@ vp install
 vp run -w build_wrapper
 vp test run --config ./vite.config.ts npm/tsgo_rs_node/ts/**/*.test.ts
 ```
+
+Repository-level executable examples live under [`examples/`](../../examples/README.md),
+including mock-client, virtual-document, distributed-orchestrator, and
+real-`tsgo` snapshot samples.

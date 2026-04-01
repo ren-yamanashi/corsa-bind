@@ -36,6 +36,15 @@ importers:
         specifier: workspace:*
         version: link:../npm/typescript_oxlint
 
+  examples:
+    dependencies:
+      '@tsgo-rs/node':
+        specifier: workspace:*
+        version: link:../npm/tsgo_rs_node
+      typescript-oxlint:
+        specifier: workspace:*
+        version: link:../npm/typescript_oxlint
+
   npm/tsgo_rs_node: {}
 
   npm/typescript_oxlint:

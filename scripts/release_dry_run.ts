@@ -1,17 +1,21 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, resolve } from "node:path";
-import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 
 import {
   publishPackedTarball,
   typescriptOxlintPackage,
   withStagedNodeBindingPackages,
-} from "./npm_release_utils.mjs";
+} from "./npm_release_utils.ts";
+import { fail, rootDir, runCommand } from "./shared.ts";
 
-const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const crates = [
+interface CrateSpec {
+  name: string;
+  path: string;
+  patches: string[];
+}
+
+const crates: CrateSpec[] = [
   {
     name: "tsgo_rs_core",
     path: resolve(rootDir, "crates/tsgo_rs_core"),
@@ -55,26 +59,17 @@ const crates = [
     ],
   },
 ];
-function run(command, args, cwd = rootDir) {
-  const result = spawnSync(command, args, {
-    cwd,
-    stdio: "inherit",
-    env: process.env,
-  });
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
-  }
-}
 
-function normalizePath(path) {
+function normalizePath(path: string): string {
   return path.replaceAll("\\", "/");
 }
 
-function patchConfigFor(crateName) {
+function patchConfigFor(crateName: string): { configDir: string; configPath: string } {
   const crate = crates.find((candidate) => candidate.name === crateName);
   if (!crate) {
     throw new Error(`Unknown crate: ${crateName}`);
   }
+
   const patchLines = crate.patches.map((patchName) => {
     const dependency = crates.find((candidate) => candidate.name === patchName);
     if (!dependency) {
@@ -82,6 +77,7 @@ function patchConfigFor(crateName) {
     }
     return `${dependency.name} = { path = "${normalizePath(dependency.path)}" }`;
   });
+
   const configDir = mkdtempSync(resolve(tmpdir(), "tsgo-rs-release-dry-run-"));
   const configPath = resolve(configDir, "cargo-config.toml");
   const configBody = patchLines.length === 0 ? "" : `[patch.crates-io]\n${patchLines.join("\n")}\n`;
@@ -89,29 +85,37 @@ function patchConfigFor(crateName) {
   return { configDir, configPath };
 }
 
-for (const crate of crates) {
-  const { configDir, configPath } = patchConfigFor(crate.name);
-  try {
-    run("cargo", [
-      "package",
-      "--locked",
-      "--allow-dirty",
-      "--no-verify",
-      "--config",
-      configPath,
-      "-p",
-      crate.name,
-    ]);
-  } finally {
-    rmSync(configDir, { recursive: true, force: true });
+async function main(): Promise<void> {
+  for (const crate of crates) {
+    const { configDir, configPath } = patchConfigFor(crate.name);
+    try {
+      runCommand(
+        "cargo",
+        [
+          "package",
+          "--locked",
+          "--allow-dirty",
+          "--no-verify",
+          "--config",
+          configPath,
+          "-p",
+          crate.name,
+        ],
+        { cwd: rootDir },
+      );
+    } finally {
+      rmSync(configDir, { recursive: true, force: true });
+    }
   }
+
+  await withStagedNodeBindingPackages(
+    { requireAllTargets: false },
+    async ({ binaryPackages, rootPackage }) => {
+      for (const npmPackage of [...binaryPackages, rootPackage, typescriptOxlintPackage]) {
+        publishPackedTarball(npmPackage, { dryRun: true });
+      }
+    },
+  );
 }
 
-await withStagedNodeBindingPackages(
-  { requireAllTargets: false },
-  async ({ binaryPackages, rootPackage }) => {
-    for (const npmPackage of [...binaryPackages, rootPackage, typescriptOxlintPackage]) {
-      publishPackedTarball(npmPackage, { dryRun: true });
-    }
-  },
-);
+await main().catch(fail);

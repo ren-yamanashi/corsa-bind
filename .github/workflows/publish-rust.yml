@@ -44,7 +44,7 @@ jobs:
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
-          node-version: lts
+          node-version: "24"
           cache: true
           run-install: true
 
@@ -101,4 +101,4 @@ jobs:
       - name: Publish ordered crates
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
-        run: node ./scripts/publish_rust.mjs
+        run: node --strip-types ./scripts/publish_rust.ts
