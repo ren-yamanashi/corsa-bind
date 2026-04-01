@@ -177,9 +177,16 @@ export function getNodeBindingTargets(
 ): NodeBindingTarget[] {
   const useDefaults = packageJson.napi?.triples?.defaults !== false;
   const additionalTargets = packageJson.napi?.triples?.additional ?? [];
-  return [...(useDefaults ? defaultTargetTriples : []), ...additionalTargets].map(
-    parseTargetTriple,
-  );
+  const seen = new Set<string>();
+  return [...(useDefaults ? defaultTargetTriples : []), ...additionalTargets]
+    .map(parseTargetTriple)
+    .filter((target) => {
+      if (seen.has(target.platformArchABI)) {
+        return false;
+      }
+      seen.add(target.platformArchABI);
+      return true;
+    });
 }
 
 export function createBinaryPackageManifest(

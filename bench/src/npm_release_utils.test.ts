@@ -27,6 +27,23 @@ describe("npm release utils", () => {
     ).toEqual(["win32-x64-msvc", "darwin-x64", "linux-x64-gnu", "darwin-arm64"]);
   });
 
+  it("deduplicates repeated native binding targets without changing publish order", () => {
+    expect(
+      getNodeBindingTargets({
+        ...nodeBindingManifest,
+        napi: {
+          triples: {
+            additional: [
+              "x86_64-unknown-linux-gnu",
+              "aarch64-apple-darwin",
+              "x86_64-unknown-linux-gnu",
+            ],
+          },
+        },
+      }).map((target: { platformArchABI: string }) => target.platformArchABI),
+    ).toEqual(["win32-x64-msvc", "darwin-x64", "linux-x64-gnu", "darwin-arm64"]);
+  });
+
   it("creates binary package manifests with libc metadata when needed", () => {
     const target = parseTargetTriple("x86_64-unknown-linux-gnu");
     expect(
