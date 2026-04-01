@@ -86,12 +86,15 @@ impl NodeHandle {
             .ok_or_else(&invalid)?
             .parse::<u16>()
             .map_err(|_| invalid())?;
-        let path = parts.next().ok_or_else(&invalid)?.into();
+        let path = parts.next().ok_or_else(&invalid)?;
+        if path.is_empty() || end < pos {
+            return Err(invalid());
+        }
         Ok(ParsedNodeHandle {
             pos,
             end,
             kind,
-            path,
+            path: path.into(),
         })
     }
 }

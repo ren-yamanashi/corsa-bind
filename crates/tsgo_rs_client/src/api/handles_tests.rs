@@ -34,3 +34,19 @@ fn parse_rejects_non_numeric_kind() {
         matches!(err, TsgoError::InvalidHandle(handle) if handle == "1.5.kind./workspace/main.ts")
     );
 }
+
+#[test]
+fn parse_rejects_empty_path_segment() {
+    let err = NodeHandle::from("1.5.123.").parse().unwrap_err();
+    assert!(matches!(err, TsgoError::InvalidHandle(handle) if handle == "1.5.123."));
+}
+
+#[test]
+fn parse_rejects_inverted_offsets() {
+    let err = NodeHandle::from("5.1.123./workspace/main.ts")
+        .parse()
+        .unwrap_err();
+    assert!(
+        matches!(err, TsgoError::InvalidHandle(handle) if handle == "5.1.123./workspace/main.ts")
+    );
+}
