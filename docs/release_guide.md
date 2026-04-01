@@ -128,7 +128,7 @@ publishing can take over.
 
 ```bash
 cargo login
-node ./scripts/publish_rust.mjs
+node --strip-types ./scripts/publish_rust.ts
 ```
 
 This publishes the public crates in dependency order with the same sequencing
@@ -140,7 +140,7 @@ used by CI.
 npm login
 vp install
 vp run -w build
-node ./scripts/publish_npm.mjs
+node --strip-types ./scripts/publish_npm.ts
 ```
 
 This packs each workspace package through `pnpm pack`, then publishes the

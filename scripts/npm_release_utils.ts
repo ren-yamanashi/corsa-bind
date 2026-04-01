@@ -1,4 +1,3 @@
-import { spawnSync } from "node:child_process";
 import {
   copyFileSync,
   cpSync,
@@ -10,20 +9,84 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, dirname, relative, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { basename, relative, resolve } from "node:path";
 
-export const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+import { rootDir, runCommand, sleep } from "./shared.ts";
+
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const pnpmCommand = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
 
-export const nodeBindingPackage = {
+export interface NodeBindingTarget {
+  abi: string | null;
+  arch: string;
+  libc?: string;
+  platform: string;
+  platformArchABI: string;
+  raw: string;
+}
+
+export interface PublishablePackage {
+  access?: string;
+  name: string;
+  path: string;
+}
+
+export interface StageNodeBindingPackagesOptions {
+  artifactsDir?: string;
+  requireAllTargets?: boolean;
+}
+
+export interface StagedNodeBindingPackages {
+  binaryPackages: PublishablePackage[];
+  cleanup(): void;
+  missingTargets: NodeBindingTarget[];
+  rootPackage: PublishablePackage;
+  stagedTargets: NodeBindingTarget[];
+}
+
+interface NapiTriplesConfig {
+  additional?: string[];
+  defaults?: boolean;
+}
+
+interface NodeBindingManifest extends Record<string, unknown> {
+  author?: string;
+  authors?: string | string[];
+  bugs?: Record<string, unknown>;
+  description?: string;
+  engines?: Record<string, unknown>;
+  files?: string[];
+  homepage?: string;
+  keywords?: string[];
+  license?: string;
+  main?: string;
+  name: string;
+  napi?: {
+    name?: string;
+    triples?: NapiTriplesConfig;
+  };
+  optionalDependencies?: Record<string, string>;
+  os?: string[];
+  cpu?: string[];
+  libc?: string[];
+  publishConfig?: Record<string, unknown>;
+  repository?: Record<string, unknown>;
+  version: string;
+}
+
+interface BindingArtifact {
+  fileName: string;
+  path: string;
+  platformArchABI: string;
+}
+
+export const nodeBindingPackage: PublishablePackage = {
   name: "@tsgo-rs/node",
   path: resolve(rootDir, "npm/tsgo_rs_node"),
   access: "public",
 };
 
-export const typescriptOxlintPackage = {
+export const typescriptOxlintPackage: PublishablePackage = {
   name: "typescript-oxlint",
   path: resolve(rootDir, "npm/typescript_oxlint"),
 };
@@ -34,9 +97,9 @@ const defaultTargetTriples = [
   "x86_64-pc-windows-msvc",
   "x86_64-apple-darwin",
   "x86_64-unknown-linux-gnu",
-];
+] as const;
 
-const sysToNodePlatform = {
+const sysToNodePlatform: Record<string, string> = {
   android: "android",
   darwin: "darwin",
   freebsd: "freebsd",
@@ -44,7 +107,7 @@ const sysToNodePlatform = {
   windows: "win32",
 };
 
-const cpuToNodeArch = {
+const cpuToNodeArch: Record<string, string> = {
   aarch64: "arm64",
   arm: "arm",
   armv7: "arm",
@@ -54,40 +117,33 @@ const cpuToNodeArch = {
   x86_64: "x64",
 };
 
-function run(command, args, cwd = rootDir) {
-  const result = spawnSync(command, args, {
-    cwd,
-    stdio: "inherit",
-    env: process.env,
-  });
-  if (result.status !== 0) {
-    process.exit(result.status ?? 1);
-  }
+function readJson<T>(path: string): T {
+  return JSON.parse(readFileSync(path, "utf8")) as T;
 }
 
-function readJson(path) {
-  return JSON.parse(readFileSync(path, "utf8"));
-}
-
-function writeJson(path, value) {
+function writeJson(path: string, value: unknown): void {
   writeFileSync(path, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
-function pickDefined(input, keys) {
-  return keys.reduce((output, key) => {
+function pickDefined<T extends Record<string, unknown>, K extends keyof T>(
+  input: T,
+  keys: readonly K[],
+): Partial<Pick<T, K>> {
+  const output: Partial<Pick<T, K>> = {};
+  for (const key of keys) {
     if (input[key] !== undefined) {
       output[key] = input[key];
     }
-    return output;
-  }, {});
+  }
+  return output;
 }
 
-export function parseTargetTriple(rawTriple) {
+export function parseTargetTriple(rawTriple: string): NodeBindingTarget {
   const normalized = rawTriple.endsWith("eabi") ? `${rawTriple.slice(0, -4)}-eabi` : rawTriple;
   const parts = normalized.split("-");
-  let cpu;
-  let sys;
-  let abi = null;
+  let cpu: string;
+  let sys: string;
+  let abi: string | null = null;
 
   if (parts.length === 4) {
     [cpu, , sys, abi = null] = parts;
@@ -99,7 +155,7 @@ export function parseTargetTriple(rawTriple) {
 
   const platform = sysToNodePlatform[sys] ?? sys;
   const arch = cpuToNodeArch[cpu] ?? cpu;
-  const target = {
+  const target: NodeBindingTarget = {
     abi,
     arch,
     platform,
@@ -117,8 +173,8 @@ export function parseTargetTriple(rawTriple) {
 }
 
 export function getNodeBindingTargets(
-  packageJson = readJson(resolve(nodeBindingPackage.path, "package.json")),
-) {
+  packageJson = readJson<NodeBindingManifest>(resolve(nodeBindingPackage.path, "package.json")),
+): NodeBindingTarget[] {
   const useDefaults = packageJson.napi?.triples?.defaults !== false;
   const additionalTargets = packageJson.napi?.triples?.additional ?? [];
   return [...(useDefaults ? defaultTargetTriples : []), ...additionalTargets].map(
@@ -126,8 +182,13 @@ export function getNodeBindingTargets(
   );
 }
 
-export function createBinaryPackageManifest(rootManifest, version, target, binaryFileName) {
-  const manifest = {
+export function createBinaryPackageManifest(
+  rootManifest: NodeBindingManifest,
+  version: string,
+  target: NodeBindingTarget,
+  binaryFileName: string,
+): NodeBindingManifest {
+  const manifest: NodeBindingManifest = {
     ...pickDefined(rootManifest, [
       "author",
       "authors",
@@ -158,8 +219,12 @@ export function createBinaryPackageManifest(rootManifest, version, target, binar
   return manifest;
 }
 
-export function createRootBindingPublishManifest(rootManifest, version, stagedTargets) {
-  const manifest = {
+export function createRootBindingPublishManifest(
+  rootManifest: NodeBindingManifest,
+  version: string,
+  stagedTargets: readonly NodeBindingTarget[],
+): NodeBindingManifest {
+  const manifest: NodeBindingManifest = {
     ...rootManifest,
     optionalDependencies: Object.fromEntries(
       stagedTargets.map((target) => [`${rootManifest.name}-${target.platformArchABI}`, version]),
@@ -174,11 +239,11 @@ export function createRootBindingPublishManifest(rootManifest, version, stagedTa
   return manifest;
 }
 
-function createBinaryPackageReadme(packageName, target) {
+function createBinaryPackageReadme(packageName: string, target: NodeBindingTarget): string {
   return `# \`${packageName}-${target.platformArchABI}\`\n\nThis is the **${target.raw}** binary for \`${packageName}\`\n`;
 }
 
-function findFilesRecursive(directory) {
+function findFilesRecursive(directory?: string): string[] {
   if (!directory) {
     return [];
   }
@@ -192,17 +257,20 @@ function findFilesRecursive(directory) {
   });
 }
 
-function collectBindingArtifacts({ binaryName, searchRoots }) {
-  const artifacts = new Map();
+function collectBindingArtifacts(options: {
+  binaryName: string;
+  searchRoots: readonly string[];
+}): Map<string, BindingArtifact> {
+  const artifacts = new Map<string, BindingArtifact>();
 
-  for (const root of searchRoots) {
+  for (const root of options.searchRoots) {
     for (const filePath of findFilesRecursive(root)) {
       const fileName = basename(filePath);
-      if (!fileName.startsWith(`${binaryName}.`) || !fileName.endsWith(".node")) {
+      if (!fileName.startsWith(`${options.binaryName}.`) || !fileName.endsWith(".node")) {
         continue;
       }
 
-      const platformArchABI = fileName.slice(binaryName.length + 1, -".node".length);
+      const platformArchABI = fileName.slice(options.binaryName.length + 1, -".node".length);
       if (!artifacts.has(platformArchABI)) {
         artifacts.set(platformArchABI, {
           fileName,
@@ -216,7 +284,7 @@ function collectBindingArtifacts({ binaryName, searchRoots }) {
   return artifacts;
 }
 
-function copyRootBindingPackage(stagePath) {
+function copyRootBindingPackage(stagePath: string): void {
   cpSync(nodeBindingPackage.path, stagePath, {
     filter(sourcePath) {
       if (sourcePath === nodeBindingPackage.path) {
@@ -236,8 +304,13 @@ function copyRootBindingPackage(stagePath) {
   });
 }
 
-export function stageNodeBindingPackages({ artifactsDir, requireAllTargets = false } = {}) {
-  const rootManifest = readJson(resolve(nodeBindingPackage.path, "package.json"));
+export function stageNodeBindingPackages({
+  artifactsDir,
+  requireAllTargets = false,
+}: StageNodeBindingPackagesOptions = {}): StagedNodeBindingPackages {
+  const rootManifest = readJson<NodeBindingManifest>(
+    resolve(nodeBindingPackage.path, "package.json"),
+  );
   const version = rootManifest.version;
   const binaryName = rootManifest.napi?.name ?? "index";
   const configuredTargets = getNodeBindingTargets(rootManifest);
@@ -272,7 +345,7 @@ export function stageNodeBindingPackages({ artifactsDir, requireAllTargets = fal
   copyRootBindingPackage(stageRootPackagePath);
 
   const stagedRootManifest = createRootBindingPublishManifest(
-    readJson(resolve(stageRootPackagePath, "package.json")),
+    readJson<NodeBindingManifest>(resolve(stageRootPackagePath, "package.json")),
     version,
     stagedTargets,
   );
@@ -280,6 +353,10 @@ export function stageNodeBindingPackages({ artifactsDir, requireAllTargets = fal
 
   const binaryPackages = stagedTargets.map((target) => {
     const artifact = artifacts.get(target.platformArchABI);
+    if (!artifact) {
+      throw new Error(`Missing artifact for ${target.platformArchABI}`);
+    }
+
     const packagePath = resolve(stageDir, "npm", target.platformArchABI);
     mkdirSync(packagePath, { recursive: true });
     writeJson(
@@ -313,7 +390,10 @@ export function stageNodeBindingPackages({ artifactsDir, requireAllTargets = fal
   };
 }
 
-export async function withStagedNodeBindingPackages(options, callback) {
+export async function withStagedNodeBindingPackages<T>(
+  options: StageNodeBindingPackagesOptions,
+  callback: (staged: StagedNodeBindingPackages) => Promise<T> | T,
+): Promise<T> {
   const staged = stageNodeBindingPackages(options);
   try {
     return await callback(staged);
@@ -322,10 +402,13 @@ export async function withStagedNodeBindingPackages(options, callback) {
   }
 }
 
-export function withPackedTarball(pkg, callback) {
+export function withPackedTarball<T>(
+  pkg: PublishablePackage,
+  callback: (tarballPath: string) => T,
+): T {
   const packDir = mkdtempSync(resolve(tmpdir(), "tsgo-rs-npm-pack-"));
   try {
-    run(pnpmCommand, ["pack", "--pack-destination", packDir], pkg.path);
+    runCommand(pnpmCommand, ["pack", "--pack-destination", packDir], { cwd: pkg.path });
     const tarballName = readdirSync(packDir).find((entry) => entry.endsWith(".tgz"));
     if (!tarballName) {
       throw new Error(`Failed to pack npm tarball for ${pkg.name}`);
@@ -336,8 +419,11 @@ export function withPackedTarball(pkg, callback) {
   }
 }
 
-export function publishPackedTarball(pkg, { dryRun = false, tag } = {}) {
-  return withPackedTarball(pkg, (tarballPath) => {
+export function publishPackedTarball(
+  pkg: PublishablePackage,
+  { dryRun = false, tag }: { dryRun?: boolean; tag?: string } = {},
+): void {
+  withPackedTarball(pkg, (tarballPath) => {
     const args = ["publish", tarballPath];
     if (pkg.access) {
       args.push("--access", pkg.access);
@@ -348,10 +434,8 @@ export function publishPackedTarball(pkg, { dryRun = false, tag } = {}) {
     if (dryRun) {
       args.push("--dry-run");
     }
-    run(npmCommand, args, rootDir);
+    runCommand(npmCommand, args, { cwd: rootDir });
   });
 }
 
-export function sleep(ms) {
-  return new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
-}
+export { rootDir, sleep };

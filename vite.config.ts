@@ -80,7 +80,7 @@ export default defineConfig({
         command: "cargo build -p tsgo_rs --bin mock_tsgo",
       },
       build_tsgo: {
-        command: "node ./scripts/build_tsgo.mjs",
+        command: "node --strip-types ./scripts/build_tsgo.ts",
       },
       build_node_debug: {
         command: "napi build --platform",
@@ -114,7 +114,7 @@ export default defineConfig({
       },
       test: {
         command: noopCommand,
-        dependsOn: ["test_rust", "test_rust_experimental", "test_ts"],
+        dependsOn: ["test_rust", "test_rust_experimental", "test_ts", "examples_smoke"],
       },
       test_rust: {
         command: "cargo test --workspace",
@@ -171,7 +171,12 @@ export default defineConfig({
         dependsOn: ["bench_native", "bench_ts"],
       },
       release_dry_run: {
-        command: "node ./scripts/release_dry_run.mjs",
+        command: "node --strip-types ./scripts/release_dry_run.ts",
+        dependsOn: ["build"],
+      },
+      examples_smoke: {
+        command: "pnpm run smoke",
+        cwd: "examples",
         dependsOn: ["build"],
       },
     },

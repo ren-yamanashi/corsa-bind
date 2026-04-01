@@ -87,14 +87,14 @@ The `bench-tsgo-ref` job keeps the heavier Ubuntu-only path:
 
 The easiest local reproduction path is a shell that provides:
 
-- `node`
+- `node 24`
 - `pnpm`
 - `go 1.26`
 
 In this repository, the most reliable one-shot reproduction command is:
 
 ```bash
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
 ```
 
 The same pattern works for the rest of the CI commands.
@@ -102,9 +102,9 @@ The same pattern works for the rest of the CI commands.
 Examples:
 
 ```bash
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
 ```
 
 Using `sh -c` instead of a login shell matters here.
@@ -115,17 +115,20 @@ It makes the tool resolution deterministic, especially for `go`, which would oth
 This sequence mirrors the current CI most closely:
 
 ```bash
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo fmt --all --check'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo clippy --workspace --all-targets -- -D warnings'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w sync_ref'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w verify_ref'
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build_tsgo'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo fmt --all --check'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo clippy --workspace --all-targets -- -D warnings'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w sync_ref'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w verify_ref'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build_tsgo'
 cargo test -p tsgo_rs --test real_tsgo_baseline --test real_tsgo_regression
-nix shell nixpkgs#nodejs_22 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
+nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
 ```
+
+This Node `24` baseline matters because the repository now executes
+TypeScript-authored automation scripts directly through `node --strip-types`.
 
 ## What Broke and Why
 

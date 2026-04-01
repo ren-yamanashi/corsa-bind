@@ -8,7 +8,7 @@ import {
   createRootBindingPublishManifest,
   getNodeBindingTargets,
   parseTargetTriple,
-} from "../../scripts/npm_release_utils.mjs";
+} from "../../scripts/npm_release_utils.ts";
 
 const nodeBindingManifest = JSON.parse(
   readFileSync(resolve(process.cwd(), "npm/tsgo_rs_node/package.json"), "utf8"),

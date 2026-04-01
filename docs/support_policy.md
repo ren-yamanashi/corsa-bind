@@ -31,7 +31,8 @@ receives fixes.
 ## Compatibility Matrix
 
 - Rust: `1.85+`
-- Node.js: `22+`
+- Node.js runtime for published packages: `22+`
+- Node.js tooling for repository scripts and examples: `24+`
 - Go: the version declared by `ref/typescript-go/go.mod`
 - Operating systems: Linux, macOS, and Windows for the supported local surface
 - Published Node prebuilds: `darwin-arm64`, `darwin-x64`, `linux-x64-gnu`, `win32-x64-msvc`

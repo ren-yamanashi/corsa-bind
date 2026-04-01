@@ -162,3 +162,6 @@ vp test run --config ./vite.config.ts npm/typescript_oxlint/ts/**/*.test.ts
 vp test bench --config ./vite.config.ts bench/src/typescript_oxlint.bench.ts
 vp test bench --config ./vite.config.ts bench/src/typescript_oxlint_rules.bench.ts
 ```
+
+Repository-level examples live under [`examples/`](../../examples/README.md),
+including custom-rule, custom-plugin, and native-rules flat-config samples.
