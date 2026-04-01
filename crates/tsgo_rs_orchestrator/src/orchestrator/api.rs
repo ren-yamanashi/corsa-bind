@@ -275,8 +275,11 @@ impl ApiOrchestrator {
         F: Fn(ApiClient, T) -> Fut + Send + Sync + Copy + 'static,
         Fut: std::future::Future<Output = Result<R>> + Send,
     {
-        self.prewarm(profile, replicas).await?;
         let inputs = inputs.into_iter().collect::<SmallVec<[T; 8]>>();
+        if inputs.is_empty() {
+            return Ok(SmallVec::new());
+        }
+        self.prewarm(profile, replicas).await?;
         let work_count = inputs.len();
         let queue_capacity = self.config.work_queue_capacity.max(1);
         let (work_tx, work_rx) = mpsc::sync_channel::<(usize, T)>(queue_capacity);

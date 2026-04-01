@@ -105,6 +105,60 @@ fn orchestrator_executes_parallel_batches() {
 }
 
 #[test]
+fn orchestrator_skips_worker_start_for_empty_batches() {
+    block_on(async {
+        let orchestrator = ApiOrchestrator::default();
+        let profile = support::api_profile("async-empty-batch", ApiMode::AsyncJsonRpcStdio);
+        let values = orchestrator
+            .execute_all(
+                &profile,
+                4,
+                std::iter::empty::<u32>(),
+                |_, value| async move { Ok::<_, tsgo_rs::TsgoError>(value) },
+            )
+            .await
+            .unwrap();
+        assert!(values.is_empty());
+        assert_eq!(orchestrator.stats().worker_count, 0);
+    });
+}
+
+#[test]
+fn orchestrator_recomputes_expired_cached_values() {
+    block_on(async {
+        let orchestrator = ApiOrchestrator::default();
+        let profile = support::api_profile("async-expiring-cache", ApiMode::AsyncJsonRpcStdio);
+        let calls = Arc::new(AtomicUsize::new(0));
+
+        let _: Value = orchestrator
+            .cached(&profile, "expiring", Some(Duration::from_millis(5)), {
+                let calls = calls.clone();
+                move |client| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    client.raw_json_request("ping", Value::Null).await
+                }
+            })
+            .await
+            .unwrap();
+
+        std::thread::sleep(Duration::from_millis(20));
+
+        let _: Value = orchestrator
+            .cached(&profile, "expiring", Some(Duration::from_millis(5)), {
+                let calls = calls.clone();
+                move |client| async move {
+                    calls.fetch_add(1, Ordering::SeqCst);
+                    client.raw_json_request("ping", Value::Null).await
+                }
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(calls.load(Ordering::SeqCst), 2);
+    });
+}
+
+#[test]
 #[cfg(feature = "experimental-distributed")]
 fn raft_cluster_elects_a_leader_and_rejects_follower_writes() {
     let cluster = RaftCluster::new(["n1", "n2", "n3"]);
