@@ -1,6 +1,6 @@
 pub use crate::RpcResponseError;
 use crate::{Result, TsgoError};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 use tsgo_rs_core::fast::{CompactString, compact_format};
 
@@ -33,6 +33,7 @@ pub struct RawMessage {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub params: Option<Value>,
     /// Successful response body.
+    #[serde(default, deserialize_with = "deserialize_present_value")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub result: Option<Value>,
     /// Error response body.
@@ -42,6 +43,17 @@ pub struct RawMessage {
 
 fn jsonrpc_version() -> CompactString {
     CompactString::from("2.0")
+}
+
+fn deserialize_present_value<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<Value>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Ok(Some(
+        Option::<Value>::deserialize(deserializer)?.unwrap_or(Value::Null),
+    ))
 }
 
 impl RawMessage {
@@ -212,6 +224,32 @@ mod tests {
                 data: None,
             }),
         };
+
+        assert!(matches!(
+            message.kind().unwrap_err(),
+            TsgoError::UnexpectedMessage(_)
+        ));
+    }
+
+    #[test]
+    fn accepts_null_result_response() {
+        let message: RawMessage =
+            serde_json::from_value(json!({ "jsonrpc": "2.0", "id": 1, "result": null })).unwrap();
+
+        assert!(matches!(
+            message.kind().unwrap(),
+            MessageKind::Response {
+                id,
+                result: Some(Value::Null),
+                error: None,
+            } if id == RequestId::integer(1)
+        ));
+    }
+
+    #[test]
+    fn rejects_response_without_result_or_error() {
+        let message: RawMessage =
+            serde_json::from_value(json!({ "jsonrpc": "2.0", "id": 1 })).unwrap();
 
         assert!(matches!(
             message.kind().unwrap_err(),
