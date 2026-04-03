@@ -10,6 +10,20 @@ over stdio.
 - expose the hot path in Rust, with Node bindings on top
 - build type-aware tooling such as `corsa-oxlint` without forking upstream
 
+## Naming
+
+`Corsa` is the codename for TypeScript's official native implementation, and
+it is used in contrast with `Strada`, the existing JS-based implementation.
+
+This repository standardizes on `Corsa` for its own APIs, docs, tasks, and
+examples. Names like `tsgo` and `TypeScript 7` are likely to become ambiguous
+later, once `tsc` defaults to the native implementation or the same codebase
+continues under version numbers beyond 7. Using `Corsa` keeps the naming stable
+even as upstream packaging and versioning evolve.
+
+When this repo refers to literal upstream artifacts, it still uses their real
+names where needed, such as `origin/typescript-go`.
+
 > [!WARNING]
 > The project is still `0.x`.
 > Core Rust and Node bindings are usable, but some upstream-facing surfaces are
@@ -22,13 +36,13 @@ over stdio.
 
 ## What You Get
 
-- `corsa_bind_client`: typed Rust client for the `tsgo` stdio API
+- `corsa_bind_client`: typed Rust client for the Corsa stdio API
 - `corsa_bind_lsp`: Rust LSP client with virtual-document support
 - `corsa_bind_orchestrator`: local worker pooling and cache reuse
 - `@corsa-bind/node`: native Node bindings built with `napi-rs`
 - `src/bindings/typescript/typescript`: shared TypeScript transport and response layer
 - `src/bindings/typescript/nodejs`, `src/bindings/typescript/bun`, `src/bindings/typescript/deno`, `src/bindings/typescript/browser`: runtime-specific TypeScript entrypoints
-- `corsa-oxlint`: type-aware Oxlint helpers powered by `tsgo`
+- `corsa-oxlint`: type-aware Oxlint helpers powered by Corsa
 - `corsa_bind_ref`: tooling for syncing and verifying the pinned upstream repo
 
 ## Quick Start
@@ -56,7 +70,7 @@ vp run -w build
 vp test
 ```
 
-Build the real pinned `tsgo` binary when you want real-upstream tests or examples:
+Build the real pinned Corsa binary when you want real-upstream tests or examples:
 
 ```bash
 vp run -w build_corsa
@@ -78,7 +92,7 @@ vp run -w bench_ts
 Examples live in [`examples/`](./examples/README.md).
 
 - smoke examples: `vp run -w examples_smoke`
-- real pinned-`tsgo` examples: `vp run -w examples_real`
+- real pinned-Corsa examples: `vp run -w examples_real`
 - experimental distributed Rust example: `vp run -w examples_rust_experimental`
 
 ## Upstream Tracking
