@@ -294,7 +294,7 @@ Touch this package when:
 
 Role:
 
-- type-aware JS and TS authoring model similar to `typescript-eslint`
+- type-aware JS and TS authoring model tailored for `Oxlint`
 - compatibility layer over the Rust and Node bindings
 
 Why it exists:
@@ -305,7 +305,7 @@ Why it exists:
 Touch this package when:
 
 - parser services, checker shims, or rule ergonomics need to evolve
-- parity with upstream or `typescript-eslint`-style workflows matters
+- parity with upstream or Oxlint-first authoring workflows matters
 
 ## End-to-End Flows
 

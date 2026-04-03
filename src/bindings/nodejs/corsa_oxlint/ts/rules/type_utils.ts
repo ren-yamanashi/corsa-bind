@@ -1,11 +1,11 @@
 import type { Node } from "@oxlint/plugins";
 
-import { ESLintUtils } from "../eslint_utils";
+import { OxlintUtils } from "../oxlint_utils";
 import { isIdentifierNamed, memberPropertyName, stripChainExpression } from "./ast";
 import type { ContextWithParserOptions, TsgoType, TsgoTypeCheckerShape } from "../types";
 
 export function checkerFor(context: ContextWithParserOptions): TsgoTypeCheckerShape {
-  return ESLintUtils.getParserServices(context).program.getTypeChecker();
+  return OxlintUtils.getParserServices(context).program.getTypeChecker();
 }
 
 export function typeAtNode(

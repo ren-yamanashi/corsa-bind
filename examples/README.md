@@ -118,7 +118,7 @@ cargo run -p corsa_bind_rs --features experimental-distributed --example distrib
 
 ## `corsa-oxlint` Examples
 
-- `examples/corsa_oxlint/custom_rule.ts`: custom type-aware rule using `ESLintUtils.getParserServices()`
+- `examples/corsa_oxlint/custom_rule.ts`: custom type-aware rule using `OxlintUtils.getParserServices()`
 - `examples/corsa_oxlint/custom_plugin.ts`: plugin wrapper around the custom rule
 - `examples/corsa_oxlint/custom_rules_config.ts`: flat config using the custom plugin
 - `examples/corsa_oxlint/native_rules_config.ts`: flat config using the built-in native rules

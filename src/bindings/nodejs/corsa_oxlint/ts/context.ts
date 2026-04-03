@@ -44,8 +44,8 @@ export function resolveProjectConfig(context: ContextWithParserOptions): Resolve
  *
  * Oxlint exposes a fixed `context.languageOptions.parserOptions` object at
  * runtime, so `corsa-oxlint` stores its richer configuration under
- * `settings.corsaOxlint` and rehydrates the expected
- * `typescript-eslint`-style shape from there.
+ * `settings.corsaOxlint` and rehydrates the expected type-aware shape from
+ * there.
  *
  * @example
  * ```ts

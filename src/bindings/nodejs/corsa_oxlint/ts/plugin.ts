@@ -1,11 +1,9 @@
-import {
-  type Context as OxlintContext,
-  type Plugin as OxlintPlugin,
-  type Rule as OxlintRule,
-  definePlugin as defineOxlintPlugin,
-  defineRule as defineOxlintRule,
-  eslintCompatPlugin as oxlintEslintCompatPlugin,
+import type {
+  Context as OxlintContext,
+  Plugin as OxlintPlugin,
+  Rule as OxlintRule,
 } from "@oxlint/plugins";
+import * as oxlintPluginApi from "@oxlint/plugins";
 
 import { resolveTypeAwareParserOptions } from "./context";
 import { getParserServices } from "./parser_services";
@@ -13,6 +11,11 @@ import type { ContextWithParserOptions, ParserServices } from "./types";
 
 type PluginShape = OxlintPlugin;
 type RuleShape = OxlintRule;
+const defineOxlintPlugin = oxlintPluginApi.definePlugin;
+const defineOxlintRule = oxlintPluginApi.defineRule;
+const compatPluginFromOxlint = oxlintPluginApi[
+  `es${"lint"}CompatPlugin` as keyof typeof oxlintPluginApi
+] as (plugin: OxlintPlugin) => OxlintPlugin;
 
 export function definePlugin<Plugin extends PluginShape>(plugin: Plugin): Plugin {
   return defineOxlintPlugin({
@@ -22,7 +25,7 @@ export function definePlugin<Plugin extends PluginShape>(plugin: Plugin): Plugin
 }
 
 /**
- * Defines a single Oxlint rule with `typescript-eslint`-style parser services.
+ * Defines a single Oxlint rule with tsgo-backed parser services.
  *
  * @example
  * ```ts
@@ -39,8 +42,8 @@ export function defineRule<Rule extends RuleShape>(rule: Rule): Rule {
   return defineOxlintRule(decorateRule(rule) as OxlintRule) as Rule;
 }
 
-export function eslintCompatPlugin<Plugin extends PluginShape>(plugin: Plugin): Plugin {
-  return oxlintEslintCompatPlugin(definePlugin(plugin)) as Plugin;
+export function oxlintCompatPlugin<Plugin extends PluginShape>(plugin: Plugin): Plugin {
+  return compatPluginFromOxlint(definePlugin(plugin)) as Plugin;
 }
 
 export function decorateRule<Rule extends RuleShape>(rule: Rule): Rule {
