@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::EncodedPayload;
+/// use corsa_client::EncodedPayload;
 ///
 /// let payload = EncodedPayload::new(vec![1, 2, 3]);
 /// assert_eq!(payload.as_bytes(), &[1, 2, 3]);

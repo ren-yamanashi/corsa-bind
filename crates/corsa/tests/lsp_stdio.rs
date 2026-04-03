@@ -1,13 +1,13 @@
 mod support;
 
-use serde_json::{Value, json};
-use std::str::FromStr;
-use std::time::Duration;
-use tsgo_rs::{
+use corsa::{
     jsonrpc::InboundEvent,
     lsp::{InitializeApiSessionParams, LspClient, VirtualChange, VirtualDocument},
     runtime::block_on,
 };
+use serde_json::{Value, json};
+use std::str::FromStr;
+use std::time::Duration;
 
 struct OverlayStateRequest;
 

@@ -1,8 +1,8 @@
 [package]
-name = "tsgo_rs_jsonrpc"
+name = "corsa_jsonrpc"
 version = "0.1.0"
 edition = "2024"
-description = "JSON-RPC framing and thread-backed transport helpers for tsgo-rs"
+description = "JSON-RPC framing and thread-backed transport helpers for corsa"
 publish = ["crates-io"]
 documentation.workspace = true
 homepage.workspace = true
@@ -12,7 +12,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [lib]
-name = "tsgo_rs_jsonrpc"
+name = "corsa_jsonrpc"
 path = "src/lib.rs"
 
 [dependencies]
@@ -20,5 +20,5 @@ log = { workspace = true }
 parking_lot = "0.12"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tsgo_rs_core = { version = "0.1.0", path = "../tsgo_rs_core" }
-tsgo_rs_runtime = { version = "0.1.0", path = "../tsgo_rs_runtime" }
+corsa_core = { version = "0.1.0", path = "../corsa_core" }
+corsa_runtime = { version = "0.1.0", path = "../corsa_runtime" }

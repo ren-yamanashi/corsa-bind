@@ -17,7 +17,7 @@ pub struct JoinHandle<T> {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_runtime::spawn;
+/// use corsa_runtime::spawn;
 ///
 /// let handle = spawn(async { String::from("tsgo") });
 /// assert_eq!(handle.join().unwrap(), "tsgo");

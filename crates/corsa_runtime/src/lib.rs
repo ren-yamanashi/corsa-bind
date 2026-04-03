@@ -6,7 +6,7 @@
 //! # Examples
 //!
 //! ```
-//! use tsgo_rs_runtime::{block_on, broadcast, spawn};
+//! use corsa_runtime::{block_on, broadcast, spawn};
 //! use std::time::Duration;
 //!
 //! let value = block_on(async { 40 + 2 });

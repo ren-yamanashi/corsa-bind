@@ -1,8 +1,8 @@
 mod support;
 
+use corsa::api::{ApiClient, ApiMode, UpdateSnapshotParams};
+use corsa::runtime::block_on;
 use serde_json::json;
-use tsgo_rs::api::{ApiClient, ApiMode, UpdateSnapshotParams};
-use tsgo_rs::runtime::block_on;
 
 #[test]
 fn msgpack_api_roundtrip_core() {
@@ -34,7 +34,7 @@ fn msgpack_api_roundtrip_core() {
             .type_to_type_node(
                 snapshot.handle.clone(),
                 project,
-                tsgo_rs::api::TypeHandle("t0000000000000001".into()),
+                corsa::api::TypeHandle("t0000000000000001".into()),
                 None,
                 None,
             )

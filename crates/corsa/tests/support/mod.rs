@@ -2,14 +2,14 @@
 
 use std::{path::PathBuf, sync::Arc};
 
-use tsgo_rs::{
+use corsa::{
     api::{
         ApiFileSystem, ApiMode, ApiProfile, ApiSpawnConfig, DirectoryEntries,
         FileSystemCapabilities, ReadFileResult,
     },
     lsp::LspSpawnConfig,
 };
-use tsgo_rs_core::fast::{CompactString, FastMap, SmallVec};
+use corsa_core::fast::{CompactString, FastMap, SmallVec};
 
 pub fn mock_binary() -> PathBuf {
     PathBuf::from(env!("CARGO_BIN_EXE_mock_tsgo"))
@@ -25,7 +25,7 @@ pub fn workspace_root() -> PathBuf {
 }
 
 pub fn test_cwd() -> PathBuf {
-    let cwd = std::env::temp_dir().join("tsgo-rs-tests");
+    let cwd = std::env::temp_dir().join("corsa-tests");
     std::fs::create_dir_all(&cwd).unwrap();
     cwd
 }

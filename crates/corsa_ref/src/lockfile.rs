@@ -1,9 +1,9 @@
-use serde::{Deserialize, Serialize};
-use std::{fs, path::Path};
-use tsgo_rs_core::{
+use corsa_core::{
     Result, TsgoError,
     fast::{CompactString, compact_format},
 };
+use serde::{Deserialize, Serialize};
+use std::{fs, path::Path};
 
 /// Lockfile describing the pinned `typescript-go` repository.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

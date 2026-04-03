@@ -1,8 +1,8 @@
 [package]
-name = "tsgo_rs_orchestrator"
+name = "corsa_orchestrator"
 version = "0.1.0"
 edition = "2024"
-description = "Worker pooling, caching, and experimental replicated orchestration for tsgo-rs"
+description = "Worker pooling, caching, and experimental replicated orchestration for corsa"
 publish = ["crates-io"]
 documentation.workspace = true
 homepage.workspace = true
@@ -12,7 +12,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [lib]
-name = "tsgo_rs_orchestrator"
+name = "corsa_orchestrator"
 path = "src/lib.rs"
 
 [features]
@@ -25,7 +25,7 @@ lsp-types = "0.97"
 parking_lot = "0.12"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tsgo_rs_client = { version = "0.1.0", path = "../tsgo_rs_client" }
-tsgo_rs_core = { version = "0.1.0", path = "../tsgo_rs_core" }
-tsgo_rs_lsp = { version = "0.1.0", path = "../tsgo_rs_lsp" }
-tsgo_rs_runtime = { version = "0.1.0", path = "../tsgo_rs_runtime" }
+corsa_client = { version = "0.1.0", path = "../corsa_client" }
+corsa_core = { version = "0.1.0", path = "../corsa_core" }
+corsa_lsp = { version = "0.1.0", path = "../corsa_lsp" }
+corsa_runtime = { version = "0.1.0", path = "../corsa_runtime" }

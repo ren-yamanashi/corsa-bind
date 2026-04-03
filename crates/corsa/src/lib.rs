@@ -1,4 +1,4 @@
-//! Top-level facade crate for the `tsgo-rs` workspace.
+//! Top-level facade crate for the `corsa` workspace.
 //!
 //! This crate re-exports the building blocks used to talk to `typescript-go`
 //! over stdio:
@@ -15,7 +15,7 @@
 //! # Examples
 //!
 //! ```
-//! use tsgo_rs::{
+//! use corsa::{
 //!     jsonrpc::RequestId,
 //!     lsp::{VirtualChange, VirtualDocument},
 //!     runtime::block_on,
@@ -30,44 +30,44 @@
 //!
 //! let value = block_on(async { 21 * 2 });
 //! assert_eq!(value, 42);
-//! # Ok::<(), tsgo_rs::TsgoError>(())
+//! # Ok::<(), corsa::TsgoError>(())
 //! ```
 
 /// Re-exports the tsgo stdio API bindings.
 pub mod api {
-    pub use tsgo_rs_client::*;
+    pub use corsa_client::*;
 }
 
 /// Re-exports shared error types.
 pub mod error {
-    pub use tsgo_rs_core::{Result, RpcResponseError, TsgoError};
+    pub use corsa_core::{Result, RpcResponseError, TsgoError};
 }
 
 /// Re-exports performance-oriented building blocks such as `CompactString`.
 pub mod fast {
-    pub use tsgo_rs_core::fast::*;
+    pub use corsa_core::fast::*;
 }
 
 /// Re-exports JSON-RPC transport primitives.
 pub mod jsonrpc {
-    pub use tsgo_rs_jsonrpc::*;
+    pub use corsa_jsonrpc::*;
 }
 
 /// Re-exports LSP clients, overlays, and virtual document helpers.
 pub mod lsp {
-    pub use tsgo_rs_lsp::*;
+    pub use corsa_lsp::*;
 }
 
 /// Re-exports structured operational events used across the workspace.
 pub mod observability {
-    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+    pub use corsa_core::{SharedObserver, TsgoEvent, TsgoObserver};
 }
 
 /// Re-exports client orchestration and replicated-state helpers.
 pub mod orchestrator {
-    pub use tsgo_rs_orchestrator::{ApiOrchestrator, ApiOrchestratorConfig, ApiOrchestratorStats};
+    pub use corsa_orchestrator::{ApiOrchestrator, ApiOrchestratorConfig, ApiOrchestratorStats};
     #[cfg(feature = "experimental-distributed")]
-    pub use tsgo_rs_orchestrator::{
+    pub use corsa_orchestrator::{
         DistributedApiOrchestrator, RaftCluster, RaftRole, ReplicatedCacheEntry, ReplicatedCommand,
         ReplicatedSnapshot, ReplicatedState,
     };
@@ -75,17 +75,17 @@ pub mod orchestrator {
 
 /// Re-exports process spawning primitives.
 pub mod process {
-    pub use tsgo_rs_core::{AsyncChildGuard, TsgoCommand};
+    pub use corsa_core::{AsyncChildGuard, TsgoCommand};
 }
 
 /// Re-exports the lightweight in-house runtime.
 pub mod runtime {
-    pub use tsgo_rs_runtime::*;
+    pub use corsa_runtime::*;
 }
 
 /// Re-exports shared pure utility helpers.
 pub mod utils {
-    pub use tsgo_rs_core::utils::*;
+    pub use corsa_core::utils::*;
 }
 
-pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
+pub use corsa_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};

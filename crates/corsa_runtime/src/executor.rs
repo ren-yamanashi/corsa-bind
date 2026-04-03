@@ -36,7 +36,7 @@ use std::{
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_runtime::block_on;
+/// use corsa_runtime::block_on;
 ///
 /// let value = block_on(async { 6 * 7 });
 /// assert_eq!(value, 42);

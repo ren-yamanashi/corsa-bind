@@ -1,10 +1,10 @@
-use napi::Result;
-use napi_derive::napi;
-use std::str::FromStr;
-use tsgo_rs::{
+use corsa::{
     lsp::{VirtualChange, VirtualDocument},
     orchestrator::DistributedApiOrchestrator,
 };
+use napi::Result;
+use napi_derive::napi;
+use std::str::FromStr;
 
 use crate::util::{into_napi_error, parse_json, to_json};
 

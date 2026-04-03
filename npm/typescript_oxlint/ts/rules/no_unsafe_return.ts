@@ -1,4 +1,4 @@
-import { isUnsafeReturn } from "@tsgo-rs/node";
+import { isUnsafeReturn } from "@corsa/node";
 
 import { nearestFunctionAncestors } from "./ast";
 import { createNativeRule } from "./rule_creator";

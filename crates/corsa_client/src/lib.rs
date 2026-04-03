@@ -19,31 +19,31 @@
 //!
 //! # Performance Model
 //!
-//! `tsgo-rs` does not try to out-compile `tsgo` itself. The win comes from
+//! `corsa` does not try to out-compile `tsgo` itself. The win comes from
 //! session reuse, snapshot reuse, and cheaper transports such as sync msgpack.
 //! For docs and benchmarks around that trade-off, see the workspace guides.
 
 /// Re-exports shared error types used by the client APIs.
 pub mod error {
-    pub use tsgo_rs_core::{Result, RpcResponseError, TsgoError};
+    pub use corsa_core::{Result, RpcResponseError, TsgoError};
 }
 
 /// Re-exports low-level JSON-RPC helpers used by the stdio client transport.
 pub mod jsonrpc {
-    pub use tsgo_rs_jsonrpc::*;
+    pub use corsa_jsonrpc::*;
 }
 
 /// Re-exports process-spawning primitives used to launch `tsgo`.
 pub mod process {
-    pub use tsgo_rs_core::{AsyncChildGuard, TsgoCommand};
+    pub use corsa_core::{AsyncChildGuard, TsgoCommand};
 }
 
 /// Re-exports structured operational events used by the client configs.
 pub mod observability {
-    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+    pub use corsa_core::{SharedObserver, TsgoEvent, TsgoObserver};
 }
 
-pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
+pub use corsa_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
 
 #[path = "api/mod.rs"]
 /// Typed bindings for the `tsgo` stdio API surface.

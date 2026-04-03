@@ -1,5 +1,5 @@
-import { TsgoApiClient } from "@tsgo-rs/node";
-import type { ProjectResponse, UpdateSnapshotResponse } from "@tsgo-rs/node";
+import { TsgoApiClient } from "@corsa/node";
+import type { ProjectResponse, UpdateSnapshotResponse } from "@corsa/node";
 
 import { assertExists, isMain, mockBinary, workspaceRoot } from "../shared.ts";
 

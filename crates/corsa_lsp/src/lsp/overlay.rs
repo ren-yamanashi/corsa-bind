@@ -1,12 +1,12 @@
 use super::{LspClient, VirtualChange, VirtualDocument};
 use crate::{Result, TsgoError};
+use corsa_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 use lsp_types::{
     DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams, Uri,
     notification::{DidChangeTextDocument, DidCloseTextDocument, DidOpenTextDocument},
 };
 use parking_lot::RwLock;
 use std::sync::Arc;
-use tsgo_rs_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 
 /// In-memory virtual document overlay synchronized with an [`LspClient`].
 ///

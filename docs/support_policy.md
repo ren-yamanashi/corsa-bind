@@ -1,6 +1,6 @@
 # Support Policy
 
-This document defines what `tsgo-rs` treats as supported for production-style
+This document defines what `corsa` treats as supported for production-style
 use and what remains experimental.
 
 ## Supported Surface

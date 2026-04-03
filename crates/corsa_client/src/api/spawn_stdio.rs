@@ -14,11 +14,11 @@ use crate::{
     jsonrpc::{JsonRpcConnection, JsonRpcConnectionOptions},
     process::{AsyncChildGuard, TsgoCommand},
 };
+use corsa_core::fast::{CompactString, SmallVec};
 use std::{
     io::{BufReader, BufWriter},
     sync::Arc,
 };
-use tsgo_rs_core::fast::{CompactString, SmallVec};
 
 pub(super) async fn spawn_jsonrpc_stdio(
     command: &TsgoCommand,
@@ -26,7 +26,7 @@ pub(super) async fn spawn_jsonrpc_stdio(
     request_timeout: Option<std::time::Duration>,
     shutdown_timeout: std::time::Duration,
     outbound_capacity: usize,
-    observer: Option<tsgo_rs_core::SharedObserver>,
+    observer: Option<corsa_core::SharedObserver>,
 ) -> Result<ClientDriver> {
     // JSON-RPC mode is used for callback-capable, async request/response
     // flows. The worker process is wrapped in `AsyncChildGuard` so shutdown
@@ -57,7 +57,7 @@ pub(super) fn spawn_msgpack_stdio(
     filesystem: Option<Arc<dyn super::ApiFileSystem>>,
     request_timeout: Option<std::time::Duration>,
     outbound_capacity: usize,
-    observer: Option<tsgo_rs_core::SharedObserver>,
+    observer: Option<corsa_core::SharedObserver>,
 ) -> Result<ClientDriver> {
     // Msgpack mode keeps a dedicated worker thread around the blocking stdio
     // pipes. This avoids async framing overhead on the hot path.

@@ -1,15 +1,15 @@
 {
   "name": "oxlint-plugin-typescript-go",
   "version": "0.1.0",
-  "description": "typescript-eslint-style Oxlint helpers powered by tsgo-rs and typescript-go",
-  "homepage": "https://github.com/ubugeeei/tsgo-rs/tree/main/npm/typescript_oxlint",
+  "description": "typescript-eslint-style Oxlint helpers powered by corsa and typescript-go",
+  "homepage": "https://github.com/ubugeeei/corsa-bind/tree/main/npm/typescript_oxlint",
   "bugs": {
-    "url": "https://github.com/ubugeeei/tsgo-rs/issues"
+    "url": "https://github.com/ubugeeei/corsa-bind/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ubugeeei/tsgo-rs.git",
+    "url": "https://github.com/ubugeeei/corsa-bind.git",
     "directory": "npm/typescript_oxlint"
   },
   "files": [
@@ -59,8 +59,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@corsa/node": "workspace:*",
     "@oxlint/plugins": "1.57.0",
-    "@tsgo-rs/node": "workspace:*",
     "oxlint": "1.57.0"
   },
   "engines": {

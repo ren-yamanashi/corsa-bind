@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use tsgo_rs::fast::SmallVec;
+use corsa::fast::SmallVec;
 
 #[derive(Clone, Debug)]
 pub struct Stats {
@@ -103,7 +103,7 @@ fn percentile_index(len: usize, percentile: usize) -> usize {
 mod tests {
     use std::time::Duration;
 
-    use tsgo_rs::fast::SmallVec;
+    use corsa::fast::SmallVec;
 
     use super::Stats;
 

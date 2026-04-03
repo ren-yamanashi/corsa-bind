@@ -1,8 +1,8 @@
 use crate::git::{canonical_repository_url, fetch_commit, snapshot, switch_detached};
 use crate::status::RepositoryProblem;
 use crate::{CommitMetadata, LockedRepository, RepositoryStatus, TsgoRefLock};
+use corsa_core::{Result, TsgoError, fast::compact_format};
 use std::path::{Path, PathBuf};
-use tsgo_rs_core::{Result, TsgoError, fast::compact_format};
 
 /// High-level manager for the pinned `ref/typescript-go` checkout.
 ///

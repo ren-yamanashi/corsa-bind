@@ -1,8 +1,8 @@
 use crate::jsonrpc::{RpcHandler, RpcHandlerMap, RpcResponseError};
+use corsa_core::fast::{Bump, BumpString, CompactString, SmallVec, compact_format};
 use phf::phf_map;
 use serde_json::{Value, json};
 use std::sync::Arc;
-use tsgo_rs_core::fast::{Bump, BumpString, CompactString, SmallVec, compact_format};
 
 const CALLBACK_PREFIX: &str = "--callbacks=";
 
@@ -101,7 +101,7 @@ pub trait ApiFileSystem: Send + Sync + 'static {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::{ApiFileSystem, FileSystemCapabilities, callback_names};
+/// use corsa_client::{ApiFileSystem, FileSystemCapabilities, callback_names};
 ///
 /// struct Fs;
 ///
@@ -140,7 +140,7 @@ pub fn callback_names(fs: &dyn ApiFileSystem) -> SmallVec<[&'static str; 5]> {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::{ApiFileSystem, FileSystemCapabilities, callback_flag};
+/// use corsa_client::{ApiFileSystem, FileSystemCapabilities, callback_flag};
 ///
 /// struct Fs;
 ///

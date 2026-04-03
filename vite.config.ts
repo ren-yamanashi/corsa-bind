@@ -4,20 +4,20 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite-plus";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const nodePackageDir = resolve(rootDir, "npm/tsgo_rs_node");
+const nodePackageDir = resolve(rootDir, "npm/corsa_node");
 const typescriptOxlintDir = resolve(rootDir, "npm/typescript_oxlint");
 const typescriptOxlintSourceDir = resolve(typescriptOxlintDir, "ts");
 const generatedNodeArtifacts = [
-  "npm/tsgo_rs_node/index.d.ts",
-  "npm/tsgo_rs_node/index.js",
-  "npm/tsgo_rs_node/ts/**/*.d.ts",
-  "npm/tsgo_rs_node/ts/**/*.js",
-  "npm/tsgo_rs_node/ts/**/*.js.map",
+  "npm/corsa_node/index.d.ts",
+  "npm/corsa_node/index.js",
+  "npm/corsa_node/ts/**/*.d.ts",
+  "npm/corsa_node/ts/**/*.js",
+  "npm/corsa_node/ts/**/*.js.map",
 ];
 const lintIgnorePatterns = [
   ...generatedNodeArtifacts,
   "bench/fixtures/**",
-  "npm/tsgo_rs_node/ts/**/*.test.ts",
+  "npm/corsa_node/ts/**/*.test.ts",
 ];
 const noopCommand = 'node -e "process.exit(0)"';
 
@@ -28,7 +28,7 @@ export default defineConfig({
   pack: {
     clean: true,
     deps: {
-      neverBundle: ["@tsgo-rs/node"],
+      neverBundle: ["@corsa/node"],
       skipNodeModulesBundle: true,
     },
     dts: true,
@@ -43,7 +43,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@tsgo-rs/node": resolve(nodePackageDir, "ts/index.ts"),
+      "@corsa/node": resolve(nodePackageDir, "ts/index.ts"),
       "oxlint-plugin-typescript-go/ast-utils": resolve(typescriptOxlintDir, "ts/ast_utils.ts"),
       "oxlint-plugin-typescript-go/eslint-utils": resolve(
         typescriptOxlintDir,
@@ -68,10 +68,10 @@ export default defineConfig({
   run: {
     tasks: {
       sync_ref: {
-        command: "cargo run -p tsgo_rs_ref -- sync",
+        command: "cargo run -p corsa_ref -- sync",
       },
       verify_ref: {
-        command: "cargo run -p tsgo_rs_ref -- verify",
+        command: "cargo run -p corsa_ref -- verify",
       },
       build: {
         command: noopCommand,
@@ -85,19 +85,19 @@ export default defineConfig({
         command: "cargo build --workspace",
       },
       build_mock: {
-        command: "cargo build -p tsgo_rs --bin mock_tsgo",
+        command: "cargo build -p corsa --bin mock_tsgo",
       },
       build_tsgo: {
         command: "node --strip-types ./scripts/build_tsgo.ts",
       },
       build_node_debug: {
         command: "napi build --platform",
-        cwd: "npm/tsgo_rs_node",
+        cwd: "npm/corsa_node",
         dependsOn: ["build_rust"],
       },
       build_node_release: {
         command: "napi build --platform --release",
-        cwd: "npm/tsgo_rs_node",
+        cwd: "npm/corsa_node",
         dependsOn: ["build_rust"],
       },
       build_typescript_oxlint: {
@@ -111,13 +111,13 @@ export default defineConfig({
       build_wrapper: {
         command:
           "vp pack index.ts types.ts --dts --format esm --out-dir ../dist --sourcemap --tsconfig ../tsconfig.json --root . --deps.neverBundle ../index.js",
-        cwd: "npm/tsgo_rs_node/ts",
+        cwd: "npm/corsa_node/ts",
         dependsOn: ["build_node_release"],
       },
       build_wrapper_ci: {
         command:
           "vp pack index.ts types.ts --dts --format esm --out-dir ../dist --sourcemap --tsconfig ../tsconfig.json --root . --deps.neverBundle ../index.js",
-        cwd: "npm/tsgo_rs_node/ts",
+        cwd: "npm/corsa_node/ts",
         dependsOn: ["build_node_debug"],
       },
       lint_rust: {
@@ -138,11 +138,11 @@ export default defineConfig({
         command: "cargo test --workspace",
       },
       test_rust_experimental: {
-        command: "cargo test -p tsgo_rs --no-default-features --test orchestrator",
+        command: "cargo test -p corsa --no-default-features --test orchestrator",
         dependsOn: ["test_rust_experimental_feature"],
       },
       test_rust_experimental_feature: {
-        command: "cargo test -p tsgo_rs --features experimental-distributed --test orchestrator",
+        command: "cargo test -p corsa --features experimental-distributed --test orchestrator",
       },
       test_ts: {
         command: "vp test run --config ./vite.config.ts",
@@ -154,12 +154,12 @@ export default defineConfig({
       },
       bench_native: {
         command:
-          "cargo run --release -p tsgo_rs --bin bench_real_tsgo -- --cold-iterations 5 --warm-iterations 20 --json-output .cache/bench_native.json",
+          "cargo run --release -p corsa --bin bench_real_tsgo -- --cold-iterations 5 --warm-iterations 20 --json-output .cache/bench_native.json",
         dependsOn: ["build_tsgo"],
       },
       bench_native_deep: {
         command:
-          "cargo run --release -p tsgo_rs --bin bench_real_tsgo -- --cold-iterations 10 --warm-iterations 80 --json-output .cache/bench_native_deep.json",
+          "cargo run --release -p corsa --bin bench_real_tsgo -- --cold-iterations 10 --warm-iterations 80 --json-output .cache/bench_native_deep.json",
         dependsOn: ["build_tsgo"],
       },
       bench_tooling_setup: {
@@ -176,7 +176,7 @@ export default defineConfig({
       },
       bench_tooling_compare: {
         command:
-          "cargo run --release -p tsgo_rs --bin bench_tooling_compare -- --iterations 10 --warmup-iterations 2 --json-output .cache/bench_tooling_compare.json",
+          "cargo run --release -p corsa --bin bench_tooling_compare -- --iterations 10 --warmup-iterations 2 --json-output .cache/bench_tooling_compare.json",
         dependsOn: ["build_tsgo", "bench_tooling_setup"],
       },
       bench_ts: {

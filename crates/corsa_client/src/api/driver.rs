@@ -2,9 +2,9 @@ use std::time::Duration;
 
 use crate::{Result, error::TsgoError, jsonrpc::JsonRpcConnection, process::AsyncChildGuard};
 use base64::{Engine as _, engine::general_purpose::STANDARD};
+use corsa_core::fast::compact_format;
 use serde_json::Value;
 use std::sync::Arc;
-use tsgo_rs_core::fast::compact_format;
 
 use super::msgpack_worker::MsgpackWorker;
 

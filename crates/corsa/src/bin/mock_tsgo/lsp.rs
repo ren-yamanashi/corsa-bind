@@ -1,12 +1,12 @@
 use crate::{Result, jsonrpc};
+use corsa::fast::{CompactString, FastMap};
+use corsa::jsonrpc::{RawMessage, RequestId};
+use corsa::lsp::{VirtualChange, VirtualDocument};
 use lsp_types::{
     DidChangeTextDocumentParams, DidCloseTextDocumentParams, DidOpenTextDocumentParams,
 };
 use serde_json::{Value, json};
 use std::io::{BufReader, BufWriter};
-use tsgo_rs::fast::{CompactString, FastMap};
-use tsgo_rs::jsonrpc::{RawMessage, RequestId};
-use tsgo_rs::lsp::{VirtualChange, VirtualDocument};
 
 pub fn run() -> Result<()> {
     let stdin = std::io::stdin();

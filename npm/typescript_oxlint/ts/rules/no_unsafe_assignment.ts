@@ -1,4 +1,4 @@
-import { isUnsafeAssignment } from "@tsgo-rs/node";
+import { isUnsafeAssignment } from "@corsa/node";
 
 import { createNativeRule } from "./rule_creator";
 import { typeTextsAtNode } from "./type_utils";

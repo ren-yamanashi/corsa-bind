@@ -1,7 +1,7 @@
 use std::{fs, path::Path};
 
+use corsa::Result;
 use serde_json::json;
-use tsgo_rs::Result;
 
 use crate::{args::Cli, dataset::DatasetCase, scenario::ScenarioRow};
 

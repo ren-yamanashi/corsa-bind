@@ -1,4 +1,4 @@
-use tsgo_rs::{
+use corsa::{
     Result, TsgoError,
     api::{ApiClient, ApiMode, ApiSpawnConfig, SymbolHandle, UpdateSnapshotParams},
     fast::{CompactString, SmallVec},
@@ -21,8 +21,8 @@ pub struct ScenarioRow {
 
 struct ProjectSession {
     client: ApiClient,
-    snapshot: tsgo_rs::api::ManagedSnapshot,
-    project: tsgo_rs::api::ProjectHandle,
+    snapshot: corsa::api::ManagedSnapshot,
+    project: corsa::api::ProjectHandle,
     file: CompactString,
     target: BenchTarget,
 }
@@ -363,8 +363,8 @@ async fn resolve_type_text(session: &ProjectSession, iterations: usize) -> Resul
 
 async fn discover_bench_target(
     client: &ApiClient,
-    snapshot: &tsgo_rs::api::ManagedSnapshot,
-    project: &tsgo_rs::api::ProjectHandle,
+    snapshot: &corsa::api::ManagedSnapshot,
+    project: &corsa::api::ProjectHandle,
     file: &str,
 ) -> Result<BenchTarget> {
     let source = client

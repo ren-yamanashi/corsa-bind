@@ -1,8 +1,8 @@
-use std::{path::Path, process::Command};
-use tsgo_rs_core::{
+use corsa_core::{
     Result, TsgoError,
     fast::{CompactString, compact_format},
 };
+use std::{path::Path, process::Command};
 
 /// Commit metadata recorded in the lockfile and repository snapshots.
 #[derive(Clone, Debug, Eq, PartialEq)]

@@ -1,11 +1,11 @@
-//! Shared primitives used across the `tsgo-rs` workspace.
+//! Shared primitives used across the `corsa` workspace.
 //!
 //! This crate intentionally stays small and foundational. It contains the
 //! common error type, process lifecycle helpers, and a few performance-oriented
 //! collection/string aliases used throughout the higher-level crates.
 //!
-//! Most applications will consume this crate indirectly via `tsgo_rs_client`
-//! or the top-level `tsgo_rs` facade, but it is also useful on its own when
+//! Most applications will consume this crate indirectly via `corsa_client`
+//! or the top-level `corsa` facade, but it is also useful on its own when
 //! embedding `tsgo` process management in another integration.
 
 mod error;

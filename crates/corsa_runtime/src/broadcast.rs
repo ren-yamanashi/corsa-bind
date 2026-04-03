@@ -38,7 +38,7 @@ pub struct Receiver<T> {
 ///
 /// ```
 /// use std::time::Duration;
-/// use tsgo_rs_runtime::broadcast;
+/// use corsa_runtime::broadcast;
 ///
 /// let (sender, first) = broadcast();
 /// let second = sender.subscribe();

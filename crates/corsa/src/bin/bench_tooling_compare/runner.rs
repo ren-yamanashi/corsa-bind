@@ -5,12 +5,12 @@ use std::{
     time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
-use serde_json::json;
-use tsgo_rs::{
+use corsa::{
     Result, TsgoError,
     api::{ApiClient, ApiMode, ApiSpawnConfig, SymbolHandle, UpdateSnapshotParams},
     fast::{CompactString, SmallVec},
 };
+use serde_json::json;
 
 use crate::{
     args::{Cli, Suite},
@@ -48,8 +48,8 @@ struct OverlayDir {
 
 struct WorkflowSession {
     client: ApiClient,
-    snapshot: tsgo_rs::api::ManagedSnapshot,
-    project: tsgo_rs::api::ProjectHandle,
+    snapshot: corsa::api::ManagedSnapshot,
+    project: corsa::api::ProjectHandle,
     file: CompactString,
     target: BenchTarget,
 }
@@ -122,13 +122,13 @@ async fn run_workflow_suite(cli: &Cli, dataset: &DatasetCase) -> Result<SmallVec
     rows.push(row(
         "editor_workflow",
         dataset,
-        "tsgo-rs-msgpack-cold",
+        "corsa-msgpack-cold",
         workflow_cold(cli, dataset).await?,
     ));
     rows.push(row(
         "editor_workflow",
         dataset,
-        "tsgo-rs-msgpack-warm",
+        "corsa-msgpack-warm",
         workflow_warm(cli, dataset).await?,
     ));
     Ok(rows)
@@ -301,8 +301,8 @@ async fn close_workflow_session(session: WorkflowSession) -> Result<()> {
 
 async fn discover_bench_target(
     client: &ApiClient,
-    snapshot: &tsgo_rs::api::ManagedSnapshot,
-    project: &tsgo_rs::api::ProjectHandle,
+    snapshot: &corsa::api::ManagedSnapshot,
+    project: &corsa::api::ProjectHandle,
     file: &str,
 ) -> Result<BenchTarget> {
     let source = client

@@ -2,12 +2,12 @@
 
 use std::path::{Path, PathBuf};
 
-use serde_json::Value;
-use tsgo_rs::{
+use corsa::{
     TsgoError,
     api::{ApiMode, ApiSpawnConfig},
     lsp::LspSpawnConfig,
 };
+use serde_json::Value;
 
 fn executable_suffix() -> &'static str {
     if cfg!(windows) { ".exe" } else { "" }

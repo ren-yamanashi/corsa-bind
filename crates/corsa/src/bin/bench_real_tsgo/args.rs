@@ -1,12 +1,12 @@
 use std::{env, path::PathBuf};
 
-use tsgo_rs::{
+use corsa::{
     api::ApiMode,
     fast::{CompactString, SmallVec},
 };
 
 const HELP: &str = "\
-usage: cargo run -p tsgo_rs --bin bench_real_tsgo -- [options]
+usage: cargo run -p corsa --bin bench_real_tsgo -- [options]
 
 options:
   --tsgo PATH              tsgo executable (default: .cache/tsgo)
@@ -183,7 +183,7 @@ fn parse_usize(value: CompactString, _flag: &CompactString) -> Result<usize, Com
 #[cfg(test)]
 mod tests {
     use super::{both_modes, parse_mode, parse_usize};
-    use tsgo_rs::api::ApiMode;
+    use corsa::api::ApiMode;
 
     #[test]
     fn parse_mode_supports_both_variants() {

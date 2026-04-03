@@ -1,8 +1,8 @@
 [package]
-name = "tsgo_rs_core"
+name = "corsa_core"
 version = "0.1.0"
 edition = "2024"
-description = "Shared errors, process lifecycle helpers, and fast-path primitives for tsgo-rs"
+description = "Shared errors, process lifecycle helpers, and fast-path primitives for corsa"
 publish = ["crates-io"]
 documentation.workspace = true
 homepage.workspace = true
@@ -12,7 +12,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [lib]
-name = "tsgo_rs_core"
+name = "corsa_core"
 path = "src/lib.rs"
 
 [dependencies]

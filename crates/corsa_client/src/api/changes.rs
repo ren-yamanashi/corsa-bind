@@ -37,7 +37,7 @@ pub enum FileChanges {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::{DocumentIdentifier, FileChangeSummary, FileChanges, UpdateSnapshotParams};
+/// use corsa_client::{DocumentIdentifier, FileChangeSummary, FileChanges, UpdateSnapshotParams};
 ///
 /// let params = UpdateSnapshotParams {
 ///     open_project: Some("/workspace/tsconfig.json".into()),

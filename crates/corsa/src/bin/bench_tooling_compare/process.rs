@@ -4,8 +4,8 @@ use std::{
     time::{Duration, Instant},
 };
 
-use tsgo_rs::{Result, TsgoError, fast::CompactString};
-use tsgo_rs_core::terminate_child_process;
+use corsa::{Result, TsgoError, fast::CompactString};
+use corsa_core::terminate_child_process;
 
 pub fn run_command(
     command: &mut Command,

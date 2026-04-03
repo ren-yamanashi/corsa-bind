@@ -1,6 +1,6 @@
 use crate::{Result, TsgoError};
+use corsa_core::fast::compact_format;
 use std::io::{Read, Write};
-use tsgo_rs_core::fast::compact_format;
 
 pub(crate) const MSG_REQUEST: u8 = 1;
 pub(crate) const MSG_CALL_RESPONSE: u8 = 2;

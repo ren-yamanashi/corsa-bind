@@ -1,6 +1,6 @@
 import { bench, describe } from "vitest";
 
-import type { ApiMode } from "@tsgo-rs/node";
+import type { ApiMode } from "@corsa/node";
 
 import { typescriptOxlintRules } from "oxlint-plugin-typescript-go/rules";
 

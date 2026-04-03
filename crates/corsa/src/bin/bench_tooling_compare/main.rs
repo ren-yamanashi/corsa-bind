@@ -8,7 +8,7 @@ mod stats;
 
 use std::process::ExitCode;
 
-use tsgo_rs::runtime::block_on;
+use corsa::runtime::block_on;
 
 fn main() -> ExitCode {
     let cli = match args::parse() {
@@ -28,7 +28,7 @@ fn main() -> ExitCode {
     }
 }
 
-async fn run(cli: args::Cli) -> tsgo_rs::Result<()> {
+async fn run(cli: args::Cli) -> corsa::Result<()> {
     let datasets = dataset::load(&cli).await?;
     let results = runner::run(&cli, &datasets).await?;
     println!("tsgo: {}", cli.tsgo_path.display());

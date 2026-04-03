@@ -4,7 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use tsgo_rs::{
+use corsa::{
     Result, TsgoError,
     api::{ApiClient, ApiMode, ApiSpawnConfig},
     fast::{CompactString, SmallVec},

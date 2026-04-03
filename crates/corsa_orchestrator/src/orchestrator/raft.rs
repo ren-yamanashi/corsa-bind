@@ -1,8 +1,8 @@
 use super::state::{ReplicatedCommand, ReplicatedState};
 use crate::{Result, TsgoError};
+use corsa_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 use parking_lot::RwLock;
 use std::sync::Arc;
-use tsgo_rs_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 
 #[path = "raft_core.rs"]
 mod raft_core;

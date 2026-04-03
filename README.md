@@ -1,4 +1,4 @@
-# tsgo-rs
+# corsa
 
 Rust bindings, orchestration layers, and Node bindings for `typescript-go` over stdio.
 
@@ -9,14 +9,14 @@ Rust bindings, orchestration layers, and Node bindings for `typescript-go` over 
 > cargo feature and some upstream-facing endpoints remain explicitly experimental.
 
 > [!IMPORTANT]
-> `tsgo-rs` is intentionally built around upstream-supported `typescript-go`
+> `corsa` is intentionally built around upstream-supported `typescript-go`
 > workflows. We follow `tsgo`'s recommended stdio/API/LSP integration points,
 > keep `ref/typescript-go` as an exact upstream checkout, and preserve a strict
 > `no forks, no patches` policy.
 
 ## What This Is
 
-`tsgo-rs` is a multi-crate workspace for talking to `typescript-go` from Rust and Node.js without patching upstream.
+`corsa` is a multi-crate workspace for talking to `typescript-go` from Rust and Node.js without patching upstream.
 
 In practice, that means:
 
@@ -46,7 +46,7 @@ Current focus:
 - Fast-path bias: `CompactString`, `SmallVec`, `bumpalo`, `memchr`, `phf`, `FxHash`
 - JS toolchain: `pnpm` + Vite+ (`vp`) with `oxfmt` / `oxlint`
 - Repo automation: `scripts/*.ts` executed directly through Node `24` with `--strip-types`
-- Node bindings: `@tsgo-rs/node` (`npm/tsgo_rs_node`) and `oxlint-plugin-typescript-go` (`npm/typescript_oxlint`) (public npm packages that still expect a caller-managed `typescript-go` executable)
+- Node bindings: `@corsa/node` (`npm/corsa_node`) and `oxlint-plugin-typescript-go` (`npm/typescript_oxlint`) (public npm packages that still expect a caller-managed `typescript-go` executable)
 - Distributed orchestration: `experimental-distributed` cargo feature
 - TS benchmark project: `bench`
 - Example workspace: `examples`
@@ -64,15 +64,15 @@ Pinned upstream at the time of writing:
 
 ## Workspace Layout
 
-- `tsgo_rs_core`: shared errors, process handles, and fast-path primitives
-- `tsgo_rs_jsonrpc`: stdio JSON-RPC framing and connection management
-- `tsgo_rs_client`: typed tsgo stdio client bindings for JSON-RPC and msgpack
-- `tsgo_rs_lsp`: LSP client support plus virtual-document overlays
-- `tsgo_rs_orchestrator`: local orchestration, caching, and experimental replicated state / Raft core
-- `tsgo_rs_runtime`: lightweight custom runtime and task primitives
-- `tsgo_rs_ref`: exact upstream pin, sync, and verification tooling
-- `tsgo_rs`: top-level facade crate, mock server, and native benchmark binaries
-- `npm/tsgo_rs_node`: `napi-rs` native bindings and the `@tsgo-rs/node` TypeScript wrapper package
+- `corsa_core`: shared errors, process handles, and fast-path primitives
+- `corsa_jsonrpc`: stdio JSON-RPC framing and connection management
+- `corsa_client`: typed tsgo stdio client bindings for JSON-RPC and msgpack
+- `corsa_lsp`: LSP client support plus virtual-document overlays
+- `corsa_orchestrator`: local orchestration, caching, and experimental replicated state / Raft core
+- `corsa_runtime`: lightweight custom runtime and task primitives
+- `corsa_ref`: exact upstream pin, sync, and verification tooling
+- `corsa`: top-level facade crate, mock server, and native benchmark binaries
+- `npm/corsa_node`: `napi-rs` native bindings and the `@corsa/node` TypeScript wrapper package
 - `npm/typescript_oxlint`: `typescript-eslint`-style compatibility layer for type-aware Oxlint JS plugins
 - `bench`: Vitest benchmark project for the Node binding
 - `examples`: curated `examples/nodejs`, `examples/rust`, and `examples/typescript_oxlint` flows from minimal start to real-project runs
@@ -106,7 +106,7 @@ still target Node `22+`.
 
 ## Examples
 
-The repository now ships executable examples for Rust, `@tsgo-rs/node`, and
+The repository now ships executable examples for Rust, `@corsa/node`, and
 `oxlint-plugin-typescript-go` under [`examples/`](./examples/README.md), from
 minimal virtual-document edits up through checker-query walkthroughs and
 opt-in upstream printer flows.
@@ -226,12 +226,12 @@ parity target and drift oracle rather than as a runtime bridge.
 ## Example
 
 ```rust
-use tsgo_rs::{
+use corsa::{
     api::{ApiClient, ApiSpawnConfig},
     runtime::block_on,
 };
 
-fn main() -> Result<(), tsgo_rs::TsgoError> {
+fn main() -> Result<(), corsa::TsgoError> {
     block_on(async {
         let client = ApiClient::spawn(
             ApiSpawnConfig::new(".cache/tsgo")
@@ -260,7 +260,7 @@ The repo ships two benchmark layers:
 
 The TS benchmark writes machine-readable output to `.cache/bench_ts.json`.
 The native benchmark writes machine-readable output to `.cache/bench_native.json`.
-The native Rust benchmark uses the real pinned tsgo binary through [`bench_real_tsgo`](./crates/tsgo_rs/src/bin/bench_real_tsgo/main.rs).
+The native Rust benchmark uses the real pinned tsgo binary through [`bench_real_tsgo`](./crates/corsa/src/bin/bench_real_tsgo/main.rs).
 
 Latest native measurements are documented in [docs/performance.md](./docs/performance.md).
 Benchmarking rationale, implementation notes, and usage tips are documented in [docs/benchmarking_guide.md](./docs/benchmarking_guide.md).
@@ -272,12 +272,12 @@ On the pinned upstream commit and bundled datasets, `msgpack` was consistently f
 The repository is intentionally aggressive about change detection because `typescript-go` is still unstable.
 
 - `cargo test --workspace` includes mock-server integration tests, policy tests, and real-tsgo regression tests when `.cache/tsgo` is available
-- `crates/tsgo_rs/tests/real_tsgo_baseline.rs` locks a real-server API summary to the pinned upstream commit
-- `crates/tsgo_rs/tests/real_tsgo_regression.rs` checks both transports against the real pinned tsgo binary
+- `crates/corsa/tests/real_tsgo_baseline.rs` locks a real-server API summary to the pinned upstream commit
+- `crates/corsa/tests/real_tsgo_regression.rs` checks both transports against the real pinned tsgo binary
 - the real-tsgo regression suite includes a hot-path guard that fails if msgpack falls too far behind JSON-RPC on the same machine
 - `vp run -w bench_native` and `vp run -w bench_ts` give repeatable transport-level measurements for Rust and Node
 - `vp run -w bench_verify` regenerates both reports and fails if benchmark samples disappear or hot-path budgets regress
-- `tsgo_rs_ref` enforces detached-HEAD exact-commit verification for `ref/typescript-go`
+- `corsa_ref` enforces detached-HEAD exact-commit verification for `ref/typescript-go`
 - CI structure and local reproduction notes live in [`docs/ci_guide.md`](./docs/ci_guide.md)
 
 ## Upstream Tracking

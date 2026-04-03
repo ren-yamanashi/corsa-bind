@@ -1,11 +1,11 @@
 #![cfg(unix)]
 
 use super::{InboundEvent, JsonRpcConnection, JsonRpcConnectionOptions, RpcHandlerMap};
+use corsa_core::{TsgoEvent, TsgoObserver};
 use serde_json::json;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use std::{io::BufReader, os::unix::net::UnixStream, thread};
-use tsgo_rs_core::{TsgoEvent, TsgoObserver};
 
 #[derive(Default)]
 struct EventCollector {
@@ -41,7 +41,7 @@ fn routes_request_and_response() {
         _ => panic!("unexpected event"),
     });
     let response: serde_json::Value =
-        tsgo_rs_runtime::block_on(client.request("ping", json!({"value": 1}))).unwrap();
+        corsa_runtime::block_on(client.request("ping", json!({"value": 1}))).unwrap();
     waiter.join().unwrap();
     assert_eq!(response, json!({"pong": true}));
 }
@@ -59,7 +59,7 @@ fn request_times_out_when_no_response_arrives() {
             .with_observer(observer.clone()),
     );
     let error =
-        tsgo_rs_runtime::block_on(client.request_value("ping", json!({"value": 1}))).unwrap_err();
+        corsa_runtime::block_on(client.request_value("ping", json!({"value": 1}))).unwrap_err();
     assert!(matches!(
         error,
         crate::TsgoError::Timeout(message) if message.contains("jsonrpc request `ping`")

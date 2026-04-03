@@ -1,6 +1,6 @@
+use corsa_core::fast::CompactString;
 use lsp_types::request::Request;
 use serde::{Deserialize, Serialize};
-use tsgo_rs_core::fast::CompactString;
 
 /// Parameters for tsgo's custom `initializeAPISession` request.
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]

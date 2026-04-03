@@ -3,14 +3,14 @@ use crate::{
     jsonrpc::{InboundEvent, JsonRpcConnection, JsonRpcConnectionOptions, RequestId},
     process::{AsyncChildGuard, TsgoCommand},
 };
-use lsp_types::{notification::Notification, request::Request};
-use serde::{Serialize, de::DeserializeOwned};
-use std::{io::BufReader, path::PathBuf, sync::Arc, time::Duration};
-use tsgo_rs_core::{
+use corsa_core::{
     SharedObserver,
     fast::{CompactString, SmallVec},
 };
-use tsgo_rs_runtime::BroadcastReceiver;
+use corsa_runtime::BroadcastReceiver;
+use lsp_types::{notification::Notification, request::Request};
+use serde::{Serialize, de::DeserializeOwned};
+use std::{io::BufReader, path::PathBuf, sync::Arc, time::Duration};
 
 use super::{
     InitializeApiSessionParams, InitializeApiSessionRequest, InitializeApiSessionResult, LspOverlay,
@@ -34,7 +34,7 @@ pub struct LspClient {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_lsp::LspSpawnConfig;
+/// use corsa_lsp::LspSpawnConfig;
 ///
 /// let config = LspSpawnConfig::new("/opt/bin/tsgo")
 ///     .with_cwd("/workspace")

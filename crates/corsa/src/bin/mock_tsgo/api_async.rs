@@ -1,8 +1,8 @@
 use crate::{Result, common, jsonrpc};
 use base64::Engine as _;
+use corsa::jsonrpc::{RawMessage, RequestId};
 use serde_json::{Value, json};
 use std::io::{BufReader, BufWriter};
-use tsgo_rs::jsonrpc::{RawMessage, RequestId};
 
 pub fn run(cwd: String, callbacks: Vec<String>) -> Result<()> {
     let stdin = std::io::stdin();

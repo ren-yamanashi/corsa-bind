@@ -2,7 +2,7 @@ use std::{path::PathBuf, sync::Arc, time::Duration};
 
 use super::ApiFileSystem;
 use crate::process::TsgoCommand;
-use tsgo_rs_core::{SharedObserver, fast::CompactString};
+use corsa_core::{SharedObserver, fast::CompactString};
 
 /// Transport mode used to talk to the tsgo API.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -22,7 +22,7 @@ pub enum ApiMode {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::{ApiMode, ApiSpawnConfig};
+/// use corsa_client::{ApiMode, ApiSpawnConfig};
 ///
 /// let config = ApiSpawnConfig::new("/opt/bin/tsgo")
 ///     .with_cwd("/workspace")
@@ -130,7 +130,7 @@ impl ApiSpawnConfig {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::{ApiProfile, ApiSpawnConfig};
+/// use corsa_client::{ApiProfile, ApiSpawnConfig};
 ///
 /// let profile = ApiProfile::new("primary", ApiSpawnConfig::new("/opt/bin/tsgo"));
 /// assert_eq!(profile.id.as_str(), "primary");

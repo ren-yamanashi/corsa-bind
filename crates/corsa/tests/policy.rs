@@ -1,21 +1,21 @@
 use std::{fs, path::PathBuf};
 
 const FAST_PATHS: &[&str] = &[
-    "crates/tsgo_rs_core/src/process.rs",
-    "crates/tsgo_rs_runtime/src/broadcast.rs",
-    "crates/tsgo_rs_lsp/src/lsp/client.rs",
-    "crates/tsgo_rs_lsp/src/lsp/overlay.rs",
-    "crates/tsgo_rs_lsp/src/lsp/virtual_document.rs",
-    "crates/tsgo_rs_lsp/src/lsp/custom.rs",
-    "crates/tsgo_rs_orchestrator/src/orchestrator/api.rs",
-    "crates/tsgo_rs_orchestrator/src/orchestrator/distributed.rs",
-    "crates/tsgo_rs_orchestrator/src/orchestrator/raft.rs",
-    "crates/tsgo_rs_orchestrator/src/orchestrator/state.rs",
-    "crates/tsgo_rs_ref/src/git.rs",
-    "crates/tsgo_rs_ref/src/lockfile.rs",
-    "crates/tsgo_rs_ref/src/manager.rs",
-    "crates/tsgo_rs_ref/src/status.rs",
-    "crates/tsgo_rs_ref/src/main.rs",
+    "crates/corsa_core/src/process.rs",
+    "crates/corsa_runtime/src/broadcast.rs",
+    "crates/corsa_lsp/src/lsp/client.rs",
+    "crates/corsa_lsp/src/lsp/overlay.rs",
+    "crates/corsa_lsp/src/lsp/virtual_document.rs",
+    "crates/corsa_lsp/src/lsp/custom.rs",
+    "crates/corsa_orchestrator/src/orchestrator/api.rs",
+    "crates/corsa_orchestrator/src/orchestrator/distributed.rs",
+    "crates/corsa_orchestrator/src/orchestrator/raft.rs",
+    "crates/corsa_orchestrator/src/orchestrator/state.rs",
+    "crates/corsa_ref/src/git.rs",
+    "crates/corsa_ref/src/lockfile.rs",
+    "crates/corsa_ref/src/manager.rs",
+    "crates/corsa_ref/src/status.rs",
+    "crates/corsa_ref/src/main.rs",
 ];
 
 #[test]

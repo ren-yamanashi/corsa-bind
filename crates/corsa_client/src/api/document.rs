@@ -1,5 +1,5 @@
+use corsa_core::fast::CompactString;
 use serde::{Deserialize, Serialize};
-use tsgo_rs_core::fast::CompactString;
 
 /// File or URI identifier accepted by tsgo API endpoints.
 ///
@@ -10,7 +10,7 @@ use tsgo_rs_core::fast::CompactString;
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_client::DocumentIdentifier;
+/// use corsa_client::DocumentIdentifier;
 ///
 /// let file = DocumentIdentifier::from("/workspace/main.ts");
 /// assert_eq!(file.as_wire_value(), "/workspace/main.ts");

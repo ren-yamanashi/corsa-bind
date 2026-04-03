@@ -1,6 +1,6 @@
 use crate::{Result, TsgoError};
+use corsa_core::fast::CompactString;
 use serde::{Deserialize, Serialize};
-use tsgo_rs_core::fast::CompactString;
 
 macro_rules! handle_type {
     ($name:ident) => {
@@ -59,14 +59,14 @@ impl NodeHandle {
     /// # Examples
     ///
     /// ```
-    /// use tsgo_rs_client::NodeHandle;
+    /// use corsa_client::NodeHandle;
     ///
     /// let parsed = NodeHandle::from("1.5.123./workspace/main.ts").parse()?;
     /// assert_eq!(parsed.pos, 1);
     /// assert_eq!(parsed.end, 5);
     /// assert_eq!(parsed.kind, 123);
     /// assert_eq!(parsed.path.as_str(), "/workspace/main.ts");
-    /// # Ok::<(), tsgo_rs_client::TsgoError>(())
+    /// # Ok::<(), corsa_client::TsgoError>(())
     /// ```
     pub fn parse(&self) -> Result<ParsedNodeHandle> {
         let mut parts = self.0.splitn(4, '.');

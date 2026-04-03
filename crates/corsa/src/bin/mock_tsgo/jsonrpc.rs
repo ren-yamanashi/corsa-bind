@@ -1,12 +1,12 @@
 use crate::Result;
+use corsa::jsonrpc::{RawMessage, RequestId, read_frame, write_frame};
 use serde_json::Value;
 use std::io::{BufRead, Write};
-use tsgo_rs::jsonrpc::{RawMessage, RequestId, read_frame, write_frame};
 
 pub fn read_message<R: BufRead>(reader: &mut R) -> Result<Option<RawMessage>> {
     match read_frame(reader) {
         Ok(payload) => Ok(Some(serde_json::from_slice(&payload)?)),
-        Err(tsgo_rs::TsgoError::Closed(_)) => Ok(None),
+        Err(corsa::TsgoError::Closed(_)) => Ok(None),
         Err(error) => Err(error.into()),
     }
 }

@@ -10,10 +10,10 @@
 //! need to work at the protocol boundary directly.
 
 pub mod observability {
-    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+    pub use corsa_core::{SharedObserver, TsgoEvent, TsgoObserver};
 }
 
-pub use tsgo_rs_core::{
+pub use corsa_core::{
     Result, RpcResponseError, SharedObserver, TsgoError, TsgoEvent, TsgoObserver,
 };
 

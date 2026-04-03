@@ -1,6 +1,6 @@
+use corsa::lsp::{VirtualChange, VirtualDocument};
 use napi::Result;
 use napi_derive::napi;
-use tsgo_rs::lsp::{VirtualChange, VirtualDocument};
 
 use crate::util::{into_napi_error, parse_json, to_json};
 

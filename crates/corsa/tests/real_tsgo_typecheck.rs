@@ -2,11 +2,11 @@ mod support;
 
 use std::{fs, process::Command};
 
-use tempfile::tempdir;
-use tsgo_rs::{
+use corsa::{
     api::{ApiClient, ApiMode, ApiSpawnConfig, UpdateSnapshotParams},
     runtime::block_on,
 };
+use tempfile::tempdir;
 
 #[test]
 fn real_tsgo_reports_actual_type_errors() {

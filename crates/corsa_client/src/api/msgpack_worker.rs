@@ -6,6 +6,11 @@
 //! async-friendly without pulling in a full async runtime.
 
 use crate::{Result, TsgoError};
+use corsa_core::{
+    SharedObserver, TsgoEvent,
+    fast::{CompactString, compact_format},
+    observe, terminate_child_process,
+};
 use log::warn;
 use parking_lot::Mutex;
 use std::{
@@ -14,11 +19,6 @@ use std::{
     sync::{Arc, mpsc},
     thread,
     time::Duration,
-};
-use tsgo_rs_core::{
-    SharedObserver, TsgoEvent,
-    fast::{CompactString, compact_format},
-    observe, terminate_child_process,
 };
 
 use super::{

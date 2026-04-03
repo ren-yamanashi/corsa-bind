@@ -1,11 +1,11 @@
 use crate::{Result, TsgoError};
+use corsa_core::fast::{CompactString, SmallVec, compact_format};
 use lsp_types::{
     Position, Range, TextDocumentContentChangeEvent, TextDocumentIdentifier, TextDocumentItem, Uri,
     VersionedTextDocumentIdentifier,
 };
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
 
 /// Incremental virtual-document edit expressed in LSP coordinates.
 ///
@@ -13,7 +13,7 @@ use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
 ///
 /// ```
 /// use lsp_types::{Position, Range};
-/// use tsgo_rs_lsp::VirtualChange;
+/// use corsa_lsp::VirtualChange;
 ///
 /// let change = VirtualChange::splice(
 ///     Range::new(Position::new(0, 0), Position::new(0, 5)),
@@ -39,13 +39,13 @@ pub struct VirtualChange {
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_lsp::{VirtualChange, VirtualDocument};
+/// use corsa_lsp::{VirtualChange, VirtualDocument};
 ///
 /// let mut document = VirtualDocument::untitled("/virtual/demo.ts", "typescript", "const n = 1;")?;
 /// document.apply_changes(&[VirtualChange::replace("const n = 2;")])?;
 /// assert_eq!(document.text, "const n = 2;");
 /// assert_eq!(document.version, 2);
-/// # Ok::<(), tsgo_rs_lsp::TsgoError>(())
+/// # Ok::<(), corsa_lsp::TsgoError>(())
 /// ```
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]

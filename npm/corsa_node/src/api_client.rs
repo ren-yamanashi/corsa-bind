@@ -1,15 +1,15 @@
 use std::sync::Mutex;
 
-use napi::{Result, bindgen_prelude::Buffer};
-use napi_derive::napi;
-use serde::Serialize;
-use tsgo_rs::{
+use corsa::{
     api::{
         ApiClient, ManagedSnapshot, ProjectHandle, SnapshotHandle, TypeHandle, UpdateSnapshotParams,
     },
     fast::{CompactString, FastMap},
     runtime::block_on,
 };
+use napi::{Result, bindgen_prelude::Buffer};
+use napi_derive::napi;
+use serde::Serialize;
 
 use crate::util::{
     SpawnOptions, build_spawn_config, into_napi_error, parse_json, parse_optional_json, to_json,
@@ -19,9 +19,9 @@ use crate::util::{
 #[serde(rename_all = "camelCase")]
 struct SnapshotState<'a> {
     snapshot: &'a SnapshotHandle,
-    projects: &'a [tsgo_rs::api::ProjectResponse],
+    projects: &'a [corsa::api::ProjectResponse],
     #[serde(skip_serializing_if = "Option::is_none")]
-    changes: &'a Option<tsgo_rs::api::SnapshotChanges>,
+    changes: &'a Option<corsa::api::SnapshotChanges>,
 }
 
 /// Thin synchronous wrapper around the Rust stdio API client.
@@ -122,7 +122,7 @@ impl TsgoApiClient {
             SnapshotHandle::from(snapshot.as_str()),
             ProjectHandle::from(project.as_str()),
             TypeHandle::from(type_handle.as_str()),
-            location.map(|value| tsgo_rs::api::NodeHandle::from(value.as_str())),
+            location.map(|value| corsa::api::NodeHandle::from(value.as_str())),
             flags,
         ))
         .map_err(into_napi_error)

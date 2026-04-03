@@ -1,5 +1,5 @@
 use crate::{LockedRepository, RepositorySnapshot, canonical_repository_id};
-use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
+use corsa_core::fast::{CompactString, SmallVec, compact_format};
 
 /// Specific kinds of drift that can make the managed ref invalid.
 #[derive(Clone, Debug, Eq, PartialEq)]

@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use tsgo_rs::{Result, fast::SmallVec};
+use corsa::{Result, fast::SmallVec};
 
 use crate::stats::Stats;
 

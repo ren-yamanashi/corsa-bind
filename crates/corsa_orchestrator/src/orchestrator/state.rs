@@ -3,9 +3,9 @@ use crate::{
     api::{ManagedSnapshot, ProjectResponse, SnapshotChanges, SnapshotHandle},
     lsp::{VirtualChange, VirtualDocument},
 };
+use corsa_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use tsgo_rs_core::fast::{CompactString, FastMap, SmallVec, compact_format};
 
 /// Snapshot metadata replicated through the distributed orchestrator.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

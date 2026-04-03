@@ -17,7 +17,7 @@ struct UnsafeTypeFlowInput {
 #[napi]
 pub fn is_unsafe_assignment(input_json: String) -> Result<bool> {
     let input = parse_json::<UnsafeTypeFlowInput>(input_json.as_str())?;
-    Ok(tsgo_rs::utils::is_unsafe_assignment(
+    Ok(corsa::utils::is_unsafe_assignment(
         input.source_type_texts.as_slice(),
         input.target_type_texts.as_slice(),
     ))
@@ -27,7 +27,7 @@ pub fn is_unsafe_assignment(input_json: String) -> Result<bool> {
 #[napi]
 pub fn is_unsafe_return(input_json: String) -> Result<bool> {
     let input = parse_json::<UnsafeTypeFlowInput>(input_json.as_str())?;
-    Ok(tsgo_rs::utils::is_unsafe_return(
+    Ok(corsa::utils::is_unsafe_return(
         input.source_type_texts.as_slice(),
         input.target_type_texts.as_slice(),
     ))

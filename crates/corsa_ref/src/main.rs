@@ -1,7 +1,7 @@
 use std::{env, path::PathBuf, process::ExitCode};
 
-use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
-use tsgo_rs_ref::TsgoRefManager;
+use corsa_core::fast::{CompactString, SmallVec, compact_format};
+use corsa_ref::TsgoRefManager;
 
 fn main() -> ExitCode {
     match run() {
@@ -13,7 +13,7 @@ fn main() -> ExitCode {
     }
 }
 
-fn run() -> tsgo_rs_core::Result<()> {
+fn run() -> corsa_core::Result<()> {
     let args = env::args()
         .skip(1)
         .map(CompactString::from)
@@ -33,7 +33,7 @@ fn run() -> tsgo_rs_core::Result<()> {
         "verify" => manager.verify(),
         "sync" => manager.sync(),
         "pin-current" => manager.pin_current(),
-        other => Err(tsgo_rs_core::TsgoError::Protocol(compact_format(
+        other => Err(corsa_core::TsgoError::Protocol(compact_format(
             format_args!("unknown tsgo_ref command: {other}"),
         ))),
     }

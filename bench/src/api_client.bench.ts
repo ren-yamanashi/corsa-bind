@@ -1,6 +1,6 @@
 import { bench, describe } from "vitest";
 
-import { TsgoApiClient } from "@tsgo-rs/node";
+import { TsgoApiClient } from "@corsa/node";
 
 import { benchOptions, ensureBenchInputs, openBenchSession } from "./support";
 

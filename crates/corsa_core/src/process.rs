@@ -19,7 +19,7 @@ use std::{
 ///
 /// ```
 /// use std::path::PathBuf;
-/// use tsgo_rs_core::TsgoCommand;
+/// use corsa_core::TsgoCommand;
 ///
 /// let command = TsgoCommand::new("/opt/bin/tsgo")
 ///     .with_cwd("/workspace")

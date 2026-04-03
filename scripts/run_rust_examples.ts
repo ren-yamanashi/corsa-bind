@@ -6,25 +6,25 @@ interface ExampleCommand {
 }
 
 const smokeExamples: readonly ExampleCommand[] = [
-  { name: "minimal_start", args: ["run", "-p", "tsgo_rs", "--example", "minimal_start"] },
-  { name: "virtual_document", args: ["run", "-p", "tsgo_rs", "--example", "virtual_document"] },
-  { name: "mock_client", args: ["run", "-p", "tsgo_rs", "--example", "mock_client"] },
-  { name: "checker_queries", args: ["run", "-p", "tsgo_rs", "--example", "checker_queries"] },
+  { name: "minimal_start", args: ["run", "-p", "corsa", "--example", "minimal_start"] },
+  { name: "virtual_document", args: ["run", "-p", "corsa", "--example", "virtual_document"] },
+  { name: "mock_client", args: ["run", "-p", "corsa", "--example", "mock_client"] },
+  { name: "checker_queries", args: ["run", "-p", "corsa", "--example", "checker_queries"] },
   {
     name: "filesystem_callbacks",
-    args: ["run", "-p", "tsgo_rs", "--example", "filesystem_callbacks"],
+    args: ["run", "-p", "corsa", "--example", "filesystem_callbacks"],
   },
-  { name: "lsp_overlay", args: ["run", "-p", "tsgo_rs", "--example", "lsp_overlay"] },
+  { name: "lsp_overlay", args: ["run", "-p", "corsa", "--example", "lsp_overlay"] },
   {
     name: "orchestrator_cache",
-    args: ["run", "-p", "tsgo_rs", "--example", "orchestrator_cache"],
+    args: ["run", "-p", "corsa", "--example", "orchestrator_cache"],
   },
-  { name: "observer_events", args: ["run", "-p", "tsgo_rs", "--example", "observer_events"] },
-  { name: "print_node_opt_in", args: ["run", "-p", "tsgo_rs", "--example", "print_node_opt_in"] },
+  { name: "observer_events", args: ["run", "-p", "corsa", "--example", "observer_events"] },
+  { name: "print_node_opt_in", args: ["run", "-p", "corsa", "--example", "print_node_opt_in"] },
 ];
 
 const realExamples: readonly ExampleCommand[] = [
-  { name: "real_snapshot", args: ["run", "-p", "tsgo_rs", "--example", "real_snapshot"] },
+  { name: "real_snapshot", args: ["run", "-p", "corsa", "--example", "real_snapshot"] },
 ];
 
 const experimentalExamples: readonly ExampleCommand[] = [
@@ -33,7 +33,7 @@ const experimentalExamples: readonly ExampleCommand[] = [
     args: [
       "run",
       "-p",
-      "tsgo_rs",
+      "corsa",
       "--features",
       "experimental-distributed",
       "--example",

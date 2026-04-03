@@ -2,7 +2,7 @@ mod support;
 
 use std::time::{Duration, Instant};
 
-use tsgo_rs::{
+use corsa::{
     api::{
         ApiClient, ApiMode, ApiSpawnConfig, ManagedSnapshot, ProjectHandle, UpdateSnapshotParams,
     },

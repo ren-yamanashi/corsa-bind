@@ -11,9 +11,9 @@ import {
   isUnknownLikeTypeTexts,
   splitTopLevelTypeText,
   splitTypeText,
-} from "@tsgo-rs/node";
+} from "@corsa/node";
 
-export type { TypeTextKind } from "@tsgo-rs/node";
+export type { TypeTextKind } from "@corsa/node";
 
 export {
   classifyTypeText,

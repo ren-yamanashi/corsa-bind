@@ -1,12 +1,12 @@
+use corsa_core::fast::CompactString;
 use serde::{Deserialize, Serialize};
-use tsgo_rs_core::fast::CompactString;
 
 /// JSON-RPC request identifier.
 ///
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_jsonrpc::RequestId;
+/// use corsa_jsonrpc::RequestId;
 ///
 /// assert_eq!(RequestId::integer(9).to_string(), "9");
 /// assert_eq!(RequestId::string("ping").to_string(), "ping");

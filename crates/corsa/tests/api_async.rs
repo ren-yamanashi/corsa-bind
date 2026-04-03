@@ -1,8 +1,8 @@
 mod support;
 
+use corsa::api::{ApiClient, ApiMode, PrintNodeOptions, UpdateSnapshotParams};
+use corsa::runtime::block_on;
 use serde_json::json;
-use tsgo_rs::api::{ApiClient, ApiMode, PrintNodeOptions, UpdateSnapshotParams};
-use tsgo_rs::runtime::block_on;
 
 #[test]
 fn async_api_roundtrip_core() {
@@ -78,7 +78,7 @@ fn async_api_roundtrip_core() {
         assert_eq!(rendered, "type:string");
         let printed = client
             .print_node(
-                &tsgo_rs::api::EncodedPayload::new(b"hello".to_vec()),
+                &corsa::api::EncodedPayload::new(b"hello".to_vec()),
                 PrintNodeOptions::default(),
             )
             .await
@@ -97,14 +97,14 @@ fn async_api_rejects_unstable_print_node_by_default() {
             .unwrap();
         let error = client
             .print_node(
-                &tsgo_rs::api::EncodedPayload::new(b"hello".to_vec()),
+                &corsa::api::EncodedPayload::new(b"hello".to_vec()),
                 PrintNodeOptions::default(),
             )
             .await
             .unwrap_err();
         assert!(matches!(
             error,
-            tsgo_rs::TsgoError::Unsupported(message) if message.contains("printNode is disabled by default")
+            corsa::TsgoError::Unsupported(message) if message.contains("printNode is disabled by default")
         ));
         client.close().await.unwrap();
     });
@@ -142,7 +142,7 @@ fn async_api_full_surface_methods() {
             .await
             .unwrap();
         let project = snapshot.projects[0].id.clone();
-        let node = tsgo_rs::api::NodeHandle("1.3.80./workspace/src/index.ts".into());
+        let node = corsa::api::NodeHandle("1.3.80./workspace/src/index.ts".into());
         let symbol = client
             .get_symbol_at_location(snapshot.handle.clone(), project.clone(), node.clone())
             .await

@@ -8,23 +8,23 @@ use crate::{
     api::{ApiClient, ApiProfile, ManagedSnapshot, UpdateSnapshotParams},
     lsp::{VirtualChange, VirtualDocument},
 };
+use corsa_core::fast::{CompactString, SmallVec, compact_format};
 use lsp_types::Uri;
 use serde::{Serialize, de::DeserializeOwned};
 use std::{future::Future, sync::Arc, time::Duration};
-use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
 
 /// Distributed orchestrator that mirrors state through an in-process Raft core.
 ///
 /// This type layers replication and leader-based mutation ordering on top of
 /// the local [`ApiOrchestrator`]. It is primarily intended for experiments,
-/// tests, and documentation of how `tsgo-rs` can coordinate stateful workflows
+/// tests, and documentation of how `corsa` can coordinate stateful workflows
 /// across nodes.
 ///
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_lsp::VirtualDocument;
-/// use tsgo_rs_orchestrator::DistributedApiOrchestrator;
+/// use corsa_lsp::VirtualDocument;
+/// use corsa_orchestrator::DistributedApiOrchestrator;
 ///
 /// let cluster = DistributedApiOrchestrator::new(["node-a", "node-b", "node-c"]);
 /// cluster.campaign("node-a")?;
@@ -36,7 +36,7 @@ use tsgo_rs_core::fast::{CompactString, SmallVec, compact_format};
 ///     cluster.document("node-a", &document.uri).unwrap().text,
 ///     "let x = 1;"
 /// );
-/// # Ok::<(), tsgo_rs_orchestrator::TsgoError>(())
+/// # Ok::<(), corsa_orchestrator::TsgoError>(())
 /// ```
 #[derive(Clone)]
 pub struct DistributedApiOrchestrator {

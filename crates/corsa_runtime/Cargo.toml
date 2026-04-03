@@ -1,8 +1,8 @@
 [package]
-name = "tsgo_rs_runtime"
+name = "corsa_runtime"
 version = "0.1.0"
 edition = "2024"
-description = "Small executor, task primitives, and broadcast channels for tsgo-rs"
+description = "Small executor, task primitives, and broadcast channels for corsa"
 publish = ["crates-io"]
 documentation.workspace = true
 homepage.workspace = true
@@ -12,7 +12,7 @@ repository.workspace = true
 rust-version.workspace = true
 
 [lib]
-name = "tsgo_rs_runtime"
+name = "corsa_runtime"
 path = "src/lib.rs"
 
 [dependencies]

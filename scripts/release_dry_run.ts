@@ -17,45 +17,45 @@ interface CrateSpec {
 
 const crates: CrateSpec[] = [
   {
-    name: "tsgo_rs_core",
-    path: resolve(rootDir, "crates/tsgo_rs_core"),
+    name: "corsa_core",
+    path: resolve(rootDir, "crates/corsa_core"),
     patches: [],
   },
   {
-    name: "tsgo_rs_runtime",
-    path: resolve(rootDir, "crates/tsgo_rs_runtime"),
+    name: "corsa_runtime",
+    path: resolve(rootDir, "crates/corsa_runtime"),
     patches: [],
   },
   {
-    name: "tsgo_rs_jsonrpc",
-    path: resolve(rootDir, "crates/tsgo_rs_jsonrpc"),
-    patches: ["tsgo_rs_core", "tsgo_rs_runtime"],
+    name: "corsa_jsonrpc",
+    path: resolve(rootDir, "crates/corsa_jsonrpc"),
+    patches: ["corsa_core", "corsa_runtime"],
   },
   {
-    name: "tsgo_rs_client",
-    path: resolve(rootDir, "crates/tsgo_rs_client"),
-    patches: ["tsgo_rs_core", "tsgo_rs_jsonrpc", "tsgo_rs_runtime"],
+    name: "corsa_client",
+    path: resolve(rootDir, "crates/corsa_client"),
+    patches: ["corsa_core", "corsa_jsonrpc", "corsa_runtime"],
   },
   {
-    name: "tsgo_rs_lsp",
-    path: resolve(rootDir, "crates/tsgo_rs_lsp"),
-    patches: ["tsgo_rs_core", "tsgo_rs_jsonrpc", "tsgo_rs_runtime"],
+    name: "corsa_lsp",
+    path: resolve(rootDir, "crates/corsa_lsp"),
+    patches: ["corsa_core", "corsa_jsonrpc", "corsa_runtime"],
   },
   {
-    name: "tsgo_rs_orchestrator",
-    path: resolve(rootDir, "crates/tsgo_rs_orchestrator"),
-    patches: ["tsgo_rs_client", "tsgo_rs_core", "tsgo_rs_lsp", "tsgo_rs_runtime"],
+    name: "corsa_orchestrator",
+    path: resolve(rootDir, "crates/corsa_orchestrator"),
+    patches: ["corsa_client", "corsa_core", "corsa_lsp", "corsa_runtime"],
   },
   {
-    name: "tsgo_rs",
-    path: resolve(rootDir, "crates/tsgo_rs"),
+    name: "corsa",
+    path: resolve(rootDir, "crates/corsa"),
     patches: [
-      "tsgo_rs_client",
-      "tsgo_rs_core",
-      "tsgo_rs_jsonrpc",
-      "tsgo_rs_lsp",
-      "tsgo_rs_orchestrator",
-      "tsgo_rs_runtime",
+      "corsa_client",
+      "corsa_core",
+      "corsa_jsonrpc",
+      "corsa_lsp",
+      "corsa_orchestrator",
+      "corsa_runtime",
     ],
   },
 ];
@@ -78,7 +78,7 @@ function patchConfigFor(crateName: string): { configDir: string; configPath: str
     return `${dependency.name} = { path = "${normalizePath(dependency.path)}" }`;
   });
 
-  const configDir = mkdtempSync(resolve(tmpdir(), "tsgo-rs-release-dry-run-"));
+  const configDir = mkdtempSync(resolve(tmpdir(), "corsa-release-dry-run-"));
   const configPath = resolve(configDir, "cargo-config.toml");
   const configBody = patchLines.length === 0 ? "" : `[patch.crates-io]\n${patchLines.join("\n")}\n`;
   writeFileSync(configPath, configBody, "utf8");

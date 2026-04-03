@@ -43,9 +43,9 @@ use super::{
 /// # Examples
 ///
 /// ```no_run
-/// use tsgo_rs_client::{ApiClient, ApiSpawnConfig};
+/// use corsa_client::{ApiClient, ApiSpawnConfig};
 ///
-/// # async fn demo() -> Result<(), tsgo_rs_client::TsgoError> {
+/// # async fn demo() -> Result<(), corsa_client::TsgoError> {
 /// let client = ApiClient::spawn(ApiSpawnConfig::new("/opt/bin/tsgo")).await?;
 /// let _initialize = client.initialize().await?;
 /// client.close().await?;

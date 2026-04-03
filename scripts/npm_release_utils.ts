@@ -83,8 +83,8 @@ interface BindingArtifact {
 }
 
 export const nodeBindingPackage: PublishablePackage = {
-  name: "@tsgo-rs/node",
-  path: resolve(rootDir, "npm/tsgo_rs_node"),
+  name: "@corsa/node",
+  path: resolve(rootDir, "npm/corsa_node"),
   access: "public",
 };
 
@@ -425,8 +425,8 @@ export function stageNodeBindingPackages({
     throw new Error("No native binding artifacts were found for the Node release packages.");
   }
 
-  const stageDir = mkdtempSync(resolve(tmpdir(), "tsgo-rs-npm-stage-"));
-  const stageRootPackagePath = resolve(stageDir, "tsgo_rs_node");
+  const stageDir = mkdtempSync(resolve(tmpdir(), "corsa-npm-stage-"));
+  const stageRootPackagePath = resolve(stageDir, "corsa_node");
 
   copyRootBindingPackage(stageRootPackagePath);
 
@@ -492,7 +492,7 @@ export function withPackedTarball<T>(
   pkg: PublishablePackage,
   callback: (tarballPath: string) => T,
 ): T {
-  const packDir = mkdtempSync(resolve(tmpdir(), "tsgo-rs-npm-pack-"));
+  const packDir = mkdtempSync(resolve(tmpdir(), "corsa-npm-pack-"));
   const packCommand = resolvePackCommand();
   try {
     runCommand(packCommand.command, [...packCommand.args, "pack", "--pack-destination", packDir], {

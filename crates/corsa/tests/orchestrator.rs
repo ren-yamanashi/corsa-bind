@@ -1,5 +1,15 @@
 mod support;
 
+#[cfg(feature = "experimental-distributed")]
+use corsa::lsp::{VirtualChange, VirtualDocument};
+#[cfg(feature = "experimental-distributed")]
+use corsa::orchestrator::{DistributedApiOrchestrator, RaftCluster, ReplicatedCommand};
+use corsa::{
+    api::{ApiClient, ApiMode, UpdateSnapshotParams},
+    observability::{TsgoEvent, TsgoObserver},
+    orchestrator::{ApiOrchestrator, ApiOrchestratorConfig},
+    runtime::block_on,
+};
 use serde_json::{Value, json};
 use std::{
     future::Future,
@@ -9,16 +19,6 @@ use std::{
     },
     thread,
     time::Duration,
-};
-#[cfg(feature = "experimental-distributed")]
-use tsgo_rs::lsp::{VirtualChange, VirtualDocument};
-#[cfg(feature = "experimental-distributed")]
-use tsgo_rs::orchestrator::{DistributedApiOrchestrator, RaftCluster, ReplicatedCommand};
-use tsgo_rs::{
-    api::{ApiClient, ApiMode, UpdateSnapshotParams},
-    observability::{TsgoEvent, TsgoObserver},
-    orchestrator::{ApiOrchestrator, ApiOrchestratorConfig},
-    runtime::block_on,
 };
 
 #[derive(Default)]
@@ -112,7 +112,7 @@ fn orchestrator_executes_parallel_batches() {
                 let echoed = client
                     .raw_json_request("echo", json!({ "value": value }))
                     .await?;
-                Ok::<_, tsgo_rs::TsgoError>(echoed["value"].as_u64().unwrap() as u32)
+                Ok::<_, corsa::TsgoError>(echoed["value"].as_u64().unwrap() as u32)
             })
             .await
             .unwrap();
@@ -130,7 +130,7 @@ fn orchestrator_skips_worker_start_for_empty_batches() {
                 &profile,
                 4,
                 std::iter::empty::<u32>(),
-                |_, value| async move { Ok::<_, tsgo_rs::TsgoError>(value) },
+                |_, value| async move { Ok::<_, corsa::TsgoError>(value) },
             )
             .await
             .unwrap();
@@ -480,7 +480,7 @@ fn orchestrator_rejects_worker_requests_above_limit() {
         let error = orchestrator.prewarm(&profile, 2).await.unwrap_err();
         assert!(matches!(
             error,
-            tsgo_rs::TsgoError::Protocol(message) if message.contains("exceeds the configured maximum")
+            corsa::TsgoError::Protocol(message) if message.contains("exceeds the configured maximum")
         ));
     });
 }

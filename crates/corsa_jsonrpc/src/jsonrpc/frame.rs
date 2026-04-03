@@ -6,8 +6,8 @@
 //! not parse or validate the JSON payload itself.
 
 use crate::{Result, TsgoError};
+use corsa_core::fast::{SmallVec, memchr, memmem};
 use std::io::{BufRead, Write};
-use tsgo_rs_core::fast::{SmallVec, memchr, memmem};
 
 const HEADER_END: &[u8] = b"\r\n\r\n";
 const CONTENT_LENGTH: &[u8] = b"content-length";
@@ -28,13 +28,13 @@ const MAX_HEADER_BYTES: usize = 16 * 1024;
 ///
 /// ```
 /// use std::io::{BufReader, Cursor};
-/// use tsgo_rs_jsonrpc::read_frame;
+/// use corsa_jsonrpc::read_frame;
 ///
 /// let bytes = b"Content-Length: 17\r\n\r\n{\"jsonrpc\":\"2.0\"}";
 /// let mut reader = BufReader::new(Cursor::new(bytes.as_slice()));
 /// let payload = read_frame(&mut reader)?;
 /// assert_eq!(payload, br#"{"jsonrpc":"2.0"}"#);
-/// # Ok::<(), tsgo_rs_jsonrpc::TsgoError>(())
+/// # Ok::<(), corsa_jsonrpc::TsgoError>(())
 /// ```
 pub fn read_frame<R>(reader: &mut R) -> Result<Vec<u8>>
 where
@@ -59,13 +59,13 @@ where
 /// # Examples
 ///
 /// ```
-/// use tsgo_rs_jsonrpc::write_frame;
+/// use corsa_jsonrpc::write_frame;
 ///
 /// let mut buffer = Vec::new();
 /// write_frame(&mut buffer, br#"{"jsonrpc":"2.0"}"#)?;
 /// assert!(buffer.starts_with(b"Content-Length: "));
 /// assert!(buffer.ends_with(br#"{"jsonrpc":"2.0"}"#));
-/// # Ok::<(), tsgo_rs_jsonrpc::TsgoError>(())
+/// # Ok::<(), corsa_jsonrpc::TsgoError>(())
 /// ```
 pub fn write_frame<W>(writer: &mut W, body: &[u8]) -> Result<()>
 where

@@ -1,8 +1,8 @@
 pub use crate::RpcResponseError;
 use crate::{Result, TsgoError};
+use corsa_core::fast::{CompactString, compact_format};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::Value;
-use tsgo_rs_core::fast::{CompactString, compact_format};
 
 use super::RequestId;
 
@@ -12,7 +12,7 @@ use super::RequestId;
 ///
 /// ```
 /// use serde_json::json;
-/// use tsgo_rs_jsonrpc::{RawMessage, RequestId};
+/// use corsa_jsonrpc::{RawMessage, RequestId};
 ///
 /// let message = RawMessage::request(RequestId::integer(1), "ping", json!({ "value": 1 }));
 /// assert_eq!(message.method.as_deref(), Some("ping"));

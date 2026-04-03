@@ -1,13 +1,13 @@
 mod support;
 
-use serde_json::json;
-use tsgo_rs::{
+use corsa::{
     TsgoError,
     api::{ApiClient, ApiMode, UpdateSnapshotParams},
     runtime::block_on,
 };
+use serde_json::json;
 
-fn main() -> Result<(), tsgo_rs::TsgoError> {
+fn main() -> Result<(), corsa::TsgoError> {
     let result = block_on(async {
         let client = ApiClient::spawn(support::mock_api_config(
             "mock_client",
@@ -61,7 +61,7 @@ fn main() -> Result<(), tsgo_rs::TsgoError> {
         });
         snapshot.release().await?;
         client.close().await?;
-        Ok::<_, tsgo_rs::TsgoError>(result)
+        Ok::<_, corsa::TsgoError>(result)
     })?;
 
     support::print_json(result);

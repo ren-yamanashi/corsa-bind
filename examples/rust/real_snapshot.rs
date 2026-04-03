@@ -1,13 +1,13 @@
 mod support;
 
-use serde_json::json;
-use tsgo_rs::{
+use corsa::{
     TsgoError,
     api::{ApiClient, ApiMode, UpdateSnapshotParams},
     runtime::block_on,
 };
+use serde_json::json;
 
-fn main() -> Result<(), tsgo_rs::TsgoError> {
+fn main() -> Result<(), corsa::TsgoError> {
     let result = block_on(async {
         let workspace_root = support::workspace_root();
         let dataset = support::real_dataset();
@@ -71,7 +71,7 @@ fn main() -> Result<(), tsgo_rs::TsgoError> {
         });
         snapshot.release().await?;
         client.close().await?;
-        Ok::<_, tsgo_rs::TsgoError>(result)
+        Ok::<_, corsa::TsgoError>(result)
     })?;
 
     support::print_json(result);

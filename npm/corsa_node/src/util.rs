@@ -1,8 +1,8 @@
+use corsa::api::{ApiMode, ApiSpawnConfig};
 use napi::{Error, Result};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json::Value;
 use std::fmt::Display;
-use tsgo_rs::api::{ApiMode, ApiSpawnConfig};
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -75,8 +75,8 @@ fn parse_mode(mode: &str) -> Result<ApiMode> {
 #[cfg(test)]
 mod tests {
     use super::{SpawnOptions, build_spawn_config, parse_json, parse_optional_json};
+    use corsa::api::ApiMode;
     use serde_json::json;
-    use tsgo_rs::api::ApiMode;
 
     #[test]
     fn parse_optional_json_defaults_to_null() {

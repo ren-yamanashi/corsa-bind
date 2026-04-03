@@ -2,7 +2,7 @@
 
 These examples are split into three groups:
 
-- `examples/nodejs/*`: executable `@tsgo-rs/node` samples
+- `examples/nodejs/*`: executable `@corsa/node` samples
 - `examples/rust/*`: executable Rust samples
 - `examples/typescript_oxlint/*`: reusable `oxlint-plugin-typescript-go` rule/plugin/config samples
 
@@ -73,7 +73,7 @@ Run one of them directly with:
 
 ```bash
 pnpm --dir examples run minimal-start
-cargo run -p tsgo_rs --example minimal_start
+cargo run -p corsa --example minimal_start
 ```
 
 ## Mock Binary Workflows
@@ -96,8 +96,8 @@ Run one of them directly with:
 ```bash
 pnpm --dir examples run checker-queries
 pnpm --dir examples run raw-calls
-cargo run -p tsgo_rs --example checker_queries
-cargo run -p tsgo_rs --example lsp_overlay
+cargo run -p corsa --example checker_queries
+cargo run -p corsa --example lsp_overlay
 ```
 
 ## Opt-In Upstream Printer
@@ -109,21 +109,21 @@ This example is separate because it demonstrates an upstream endpoint that is in
 Run it with:
 
 ```bash
-cargo run -p tsgo_rs --example print_node_opt_in
+cargo run -p corsa --example print_node_opt_in
 ```
 
 ## Real Pinned `tsgo`
 
 These examples hit the exact upstream-pinned checkout under `ref/typescript-go`.
 
-- `examples/nodejs/real_snapshot.ts`: opens the pinned project through `@tsgo-rs/node` and fetches a real source file snapshot
+- `examples/nodejs/real_snapshot.ts`: opens the pinned project through `@corsa/node` and fetches a real source file snapshot
 - `examples/rust/real_snapshot.rs`: the Rust-side equivalent using the msgpack-first API client
 
 Run one directly with:
 
 ```bash
 pnpm --dir examples run real-snapshot
-cargo run -p tsgo_rs --example real_snapshot
+cargo run -p corsa --example real_snapshot
 ```
 
 ## Experimental Distributed
@@ -135,7 +135,7 @@ This example is intentionally separated because it requires the cargo feature.
 Run it with:
 
 ```bash
-cargo run -p tsgo_rs --features experimental-distributed --example distributed_orchestrator
+cargo run -p corsa --features experimental-distributed --example distributed_orchestrator
 ```
 
 ## `oxlint-plugin-typescript-go` Examples

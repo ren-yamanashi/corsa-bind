@@ -1,6 +1,6 @@
 //! LSP-focused client helpers for `typescript-go`.
 //!
-//! This crate complements `tsgo_rs_client` with Language Server Protocol
+//! This crate complements `corsa_client` with Language Server Protocol
 //! utilities:
 //!
 //! - [`LspClient`] talks to `tsgo --lsp --stdio`
@@ -16,20 +16,20 @@
 
 /// Re-exports JSON-RPC transport primitives used by the LSP client.
 pub mod jsonrpc {
-    pub use tsgo_rs_jsonrpc::*;
+    pub use corsa_jsonrpc::*;
 }
 
 /// Re-exports child-process helpers used to launch `tsgo --lsp`.
 pub mod process {
-    pub use tsgo_rs_core::{AsyncChildGuard, TsgoCommand};
+    pub use corsa_core::{AsyncChildGuard, TsgoCommand};
 }
 
 /// Re-exports structured operational events used by the LSP configs.
 pub mod observability {
-    pub use tsgo_rs_core::{SharedObserver, TsgoEvent, TsgoObserver};
+    pub use corsa_core::{SharedObserver, TsgoEvent, TsgoObserver};
 }
 
-pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
+pub use corsa_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};
 
 #[path = "lsp/mod.rs"]
 /// LSP client, overlay, and custom-request types.

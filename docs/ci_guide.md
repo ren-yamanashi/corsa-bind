@@ -70,7 +70,7 @@ The important commands are:
 vp run -w sync_ref
 vp run -w verify_ref
 vp run -w build_tsgo
-cargo test -p tsgo_rs --no-default-features --test real_tsgo_regression --test real_tsgo_typecheck
+cargo test -p corsa --no-default-features --test real_tsgo_regression --test real_tsgo_typecheck
 ```
 
 ## `bench-tsgo-ref`
@@ -123,7 +123,7 @@ nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w tes
 nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w sync_ref'
 nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w verify_ref'
 nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build_tsgo'
-cargo test -p tsgo_rs --test real_tsgo_baseline --test real_tsgo_regression
+cargo test -p corsa --test real_tsgo_baseline --test real_tsgo_regression
 nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
 ```
 
@@ -142,9 +142,9 @@ The CI work that made this path reliable fell into three buckets:
 
 The first failure mode came from `typescript_oxlint`.
 
-The original `tsconfig` path mapping for `@tsgo-rs/node` pointed at:
+The original `tsconfig` path mapping for `@corsa/node` pointed at:
 
-- `../tsgo_rs_node/dist/index.d.mts`
+- `../corsa_node/dist/index.d.mts`
 
 That works after the wrapper package has already been built.
 It is the wrong dependency edge for `vp check`, because `vp check` is supposed to validate source state before build artifacts exist.
@@ -225,7 +225,7 @@ A relative path looks harmless but is rejected by the Go toolchain.
 
 ## 5. `verify_ref` Is Supposed to Be Strict
 
-The `tsgo_rs_ref` checks are intentionally unforgiving.
+The `corsa_ref` checks are intentionally unforgiving.
 
 They enforce that `ref/typescript-go` is:
 
@@ -316,7 +316,7 @@ The most important files for this CI stabilization work are:
 
 ## Troubleshooting
 
-## `vp check` says `@tsgo-rs/node` cannot be found
+## `vp check` says `@corsa/node` cannot be found
 
 Check whether `typescript_oxlint` is resolving the package to source or to `dist/`.
 For source validation, it should resolve to the source TypeScript entrypoint, not to generated declarations.

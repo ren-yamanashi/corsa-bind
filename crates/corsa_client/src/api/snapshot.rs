@@ -1,7 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use crate::Result;
-use tsgo_rs_runtime::spawn;
+use corsa_runtime::spawn;
 
 use super::{
     ApiClient, DocumentIdentifier, ProjectResponse, SnapshotChanges, SnapshotHandle,
