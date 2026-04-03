@@ -7,7 +7,10 @@ interface ExampleCommand {
 
 const smokeExamples: readonly ExampleCommand[] = [
   { name: "minimal_start", args: ["run", "-p", "corsa_bind_rs", "--example", "minimal_start"] },
-  { name: "virtual_document", args: ["run", "-p", "corsa_bind_rs", "--example", "virtual_document"] },
+  {
+    name: "virtual_document",
+    args: ["run", "-p", "corsa_bind_rs", "--example", "virtual_document"],
+  },
   { name: "mock_client", args: ["run", "-p", "corsa_bind_rs", "--example", "mock_client"] },
   {
     name: "filesystem_callbacks",

@@ -60,9 +60,9 @@ for (const mode of ["msgpack", "jsonrpc"] as const) {
       baseToStringContext,
     );
     const startsWithContext = createContext(mode);
-    const startsWithVisitors = (
-      corsaOxlintRules["prefer-string-starts-ends-with"] as any
-    ).create(startsWithContext);
+    const startsWithVisitors = (corsaOxlintRules["prefer-string-starts-ends-with"] as any).create(
+      startsWithContext,
+    );
 
     bench("restrict-plus-operands visitor", () => {
       restrictVisitors.BinaryExpression(createPlusNode());

@@ -116,10 +116,10 @@ These rows are intentionally not the same workload as a full compiler CLI check.
 They model a `corsa-bind` session that opens a project once and then runs a representative query flow (`default project` + `source file` + `symbol` + `type` + `typeToString`).
 
 | dataset      | `tsgo` CLI project check | `corsa-bind` cold workflow | `corsa-bind` warm workflow |
-| ------------ | -----------------------: | ----------------------: | ----------------------: |
-| `ast`        |                   23.995 |                  19.666 |                   0.376 |
-| `api`        |                   35.783 |                  30.049 |                   0.181 |
-| `_extension` |                   58.801 |                  45.811 |                   0.186 |
+| ------------ | -----------------------: | -------------------------: | -------------------------: |
+| `ast`        |                   23.995 |                     19.666 |                      0.376 |
+| `api`        |                   35.783 |                     30.049 |                      0.181 |
+| `_extension` |                   58.801 |                     45.811 |                      0.186 |
 
 The interesting part is not that `corsa-bind` somehow beats the underlying engine on identical work.
 It does not.
@@ -154,5 +154,5 @@ The current Vitest bench summary is useful for relative ranking but the JSON fil
 - `ApiSpawnConfig::new()` defaults to `SyncMsgpackStdio`, because it is still consistently ahead on the measured real-tsgo paths.
 - `getSourceFile` benefits strongly from msgpack because async JSON-RPC has to carry binary payloads through JSON framing.
 - `bench/src/report_guard.test.ts` fails when benchmark samples go missing or when the measured hot paths drift past the configured budget.
-- `crates/corsa_bind_rs/tests/real_tsgo_baseline.rs` pins the real upstream API summary for the locked `tsgo` commit.
+- `src/bindings/rust/corsa_bind_rs/tests/real_tsgo_baseline.rs` pins the real upstream API summary for the locked `tsgo` commit.
 - `printNode` is intentionally excluded from the default native suite at the pinned upstream commit because the real `tsgo` server can still panic inside `internal/printer` on real project data.

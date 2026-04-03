@@ -6,15 +6,15 @@
     "allowImportingTsExtensions": true,
     "rewriteRelativeImportExtensions": true,
     "paths": {
-      "@corsa-bind/node": ["./npm/corsa_bind_node/ts/index.ts"],
-      "corsa-oxlint": ["./npm/corsa_oxlint/ts/index.ts"],
-      "corsa-oxlint/ast-utils": ["./npm/corsa_oxlint/ts/ast_utils.ts"],
-      "corsa-oxlint/eslint-utils": ["./npm/corsa_oxlint/ts/eslint_utils.ts"],
-      "corsa-oxlint/json-schema": ["./npm/corsa_oxlint/ts/json_schema.ts"],
-      "corsa-oxlint/rule-tester": ["./npm/corsa_oxlint/ts/rule_tester.ts"],
-      "corsa-oxlint/rules": ["./npm/corsa_oxlint/ts/rules/index.ts"],
-      "corsa-oxlint/ts-eslint": ["./npm/corsa_oxlint/ts/ts_eslint.ts"],
-      "corsa-oxlint/ts-estree": ["./npm/corsa_oxlint/ts/ts_estree.ts"]
+      "@corsa-bind/node": ["./src/bindings/nodejs/corsa_bind_node/ts/index.ts"],
+      "corsa-oxlint": ["./src/bindings/nodejs/corsa_oxlint/ts/index.ts"],
+      "corsa-oxlint/ast-utils": ["./src/bindings/nodejs/corsa_oxlint/ts/ast_utils.ts"],
+      "corsa-oxlint/eslint-utils": ["./src/bindings/nodejs/corsa_oxlint/ts/eslint_utils.ts"],
+      "corsa-oxlint/json-schema": ["./src/bindings/nodejs/corsa_oxlint/ts/json_schema.ts"],
+      "corsa-oxlint/rule-tester": ["./src/bindings/nodejs/corsa_oxlint/ts/rule_tester.ts"],
+      "corsa-oxlint/rules": ["./src/bindings/nodejs/corsa_oxlint/ts/rules/index.ts"],
+      "corsa-oxlint/ts-eslint": ["./src/bindings/nodejs/corsa_oxlint/ts/ts_eslint.ts"],
+      "corsa-oxlint/ts-estree": ["./src/bindings/nodejs/corsa_oxlint/ts/ts_estree.ts"]
     },
     "strict": true,
     "declaration": true,
@@ -26,10 +26,10 @@
   "include": [
     "bench/**/*.ts",
     "examples/**/*.ts",
-    "npm/corsa_oxlint/ts/**/*.ts",
-    "npm/corsa_oxlint/tsconfig.json",
-    "npm/corsa_bind_node/index.d.ts",
-    "npm/corsa_bind_node/ts/**/*.ts",
+    "src/bindings/nodejs/corsa_oxlint/ts/**/*.ts",
+    "src/bindings/nodejs/corsa_oxlint/tsconfig.json",
+    "src/bindings/nodejs/corsa_bind_node/index.d.ts",
+    "src/bindings/nodejs/corsa_bind_node/ts/**/*.ts",
     "scripts/**/*.ts",
     "vite.config.ts"
   ]

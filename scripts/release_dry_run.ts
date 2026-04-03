@@ -18,37 +18,37 @@ interface CrateSpec {
 const crates: CrateSpec[] = [
   {
     name: "corsa_bind_core",
-    path: resolve(rootDir, "crates/corsa_bind_core"),
+    path: resolve(rootDir, "src/core/corsa_bind_core"),
     patches: [],
   },
   {
     name: "corsa_bind_runtime",
-    path: resolve(rootDir, "crates/corsa_bind_runtime"),
+    path: resolve(rootDir, "src/core/corsa_bind_runtime"),
     patches: [],
   },
   {
     name: "corsa_bind_jsonrpc",
-    path: resolve(rootDir, "crates/corsa_bind_jsonrpc"),
+    path: resolve(rootDir, "src/core/corsa_bind_jsonrpc"),
     patches: ["corsa_bind_core", "corsa_bind_runtime"],
   },
   {
     name: "corsa_bind_client",
-    path: resolve(rootDir, "crates/corsa_bind_client"),
+    path: resolve(rootDir, "src/core/corsa_bind_client"),
     patches: ["corsa_bind_core", "corsa_bind_jsonrpc", "corsa_bind_runtime"],
   },
   {
     name: "corsa_bind_lsp",
-    path: resolve(rootDir, "crates/corsa_bind_lsp"),
+    path: resolve(rootDir, "src/core/corsa_bind_lsp"),
     patches: ["corsa_bind_core", "corsa_bind_jsonrpc", "corsa_bind_runtime"],
   },
   {
     name: "corsa_bind_orchestrator",
-    path: resolve(rootDir, "crates/corsa_bind_orchestrator"),
+    path: resolve(rootDir, "src/core/corsa_bind_orchestrator"),
     patches: ["corsa_bind_client", "corsa_bind_core", "corsa_bind_lsp", "corsa_bind_runtime"],
   },
   {
     name: "corsa_bind_rs",
-    path: resolve(rootDir, "crates/corsa_bind_rs"),
+    path: resolve(rootDir, "src/bindings/rust/corsa_bind_rs"),
     patches: [
       "corsa_bind_client",
       "corsa_bind_core",

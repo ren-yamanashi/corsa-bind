@@ -84,13 +84,13 @@ interface BindingArtifact {
 
 export const nodeBindingPackage: PublishablePackage = {
   name: "@corsa-bind/node",
-  path: resolve(rootDir, "npm/corsa_bind_node"),
+  path: resolve(rootDir, "src/bindings/nodejs/corsa_bind_node"),
   access: "public",
 };
 
 export const corsaOxlintPackage: PublishablePackage = {
   name: "corsa-oxlint",
-  path: resolve(rootDir, "npm/corsa_oxlint"),
+  path: resolve(rootDir, "src/bindings/nodejs/corsa_oxlint"),
 };
 
 export const npmPackages = [nodeBindingPackage, corsaOxlintPackage];
@@ -378,7 +378,7 @@ function copyRootBindingPackage(stagePath: string): void {
       }
 
       const relativePath = relative(nodeBindingPackage.path, sourcePath).replaceAll("\\", "/");
-      if (relativePath.startsWith("npm/")) {
+      if (relativePath.startsWith("src/bindings/nodejs/")) {
         return false;
       }
       if (relativePath.endsWith(".node")) {

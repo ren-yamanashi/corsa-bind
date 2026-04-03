@@ -10,10 +10,7 @@ export const tsgoPath = resolve(
   process.platform === "win32" ? ".cache/tsgo.exe" : ".cache/tsgo",
 );
 export const datasetPath = resolve(workspaceRoot, "ref/typescript-go/_packages/api/tsconfig.json");
-export const corsaOxlintFixtureDir = resolve(
-  workspaceRoot,
-  "bench/fixtures/corsa_oxlint",
-);
+export const corsaOxlintFixtureDir = resolve(workspaceRoot, "bench/fixtures/corsa_oxlint");
 export const corsaOxlintConfigPath = resolve(corsaOxlintFixtureDir, "tsconfig.json");
 export const corsaOxlintFilePath = resolve(corsaOxlintFixtureDir, "index.ts");
 export const corsaOxlintSourceText = readFileSync(corsaOxlintFilePath, "utf8");

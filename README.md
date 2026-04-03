@@ -104,5 +104,5 @@ Examples live in [`examples/`](./examples/README.md).
 - performance snapshots: [`docs/performance.md`](./docs/performance.md)
 - release workflow: [`docs/release_guide.md`](./docs/release_guide.md)
 - supply-chain policy: [`docs/supply_chain_policy.md`](./docs/supply_chain_policy.md)
-- Node package details: [`npm/corsa_bind_node/README.md`](./npm/corsa_bind_node/README.md)
-- `corsa-oxlint` details: [`npm/corsa_oxlint/README.md`](./npm/corsa_oxlint/README.md)
+- Node package details: [`src/bindings/nodejs/corsa_bind_node/README.md`](./src/bindings/nodejs/corsa_bind_node/README.md)
+- `corsa-oxlint` details: [`src/bindings/nodejs/corsa_oxlint/README.md`](./src/bindings/nodejs/corsa_oxlint/README.md)

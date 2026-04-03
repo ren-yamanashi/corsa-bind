@@ -4,20 +4,20 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite-plus";
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const nodePackageDir = resolve(rootDir, "npm/corsa_bind_node");
-const corsaOxlintDir = resolve(rootDir, "npm/corsa_oxlint");
+const nodePackageDir = resolve(rootDir, "src/bindings/nodejs/corsa_bind_node");
+const corsaOxlintDir = resolve(rootDir, "src/bindings/nodejs/corsa_oxlint");
 const corsaOxlintSourceDir = resolve(corsaOxlintDir, "ts");
 const generatedNodeArtifacts = [
-  "npm/corsa_bind_node/index.d.ts",
-  "npm/corsa_bind_node/index.js",
-  "npm/corsa_bind_node/ts/**/*.d.ts",
-  "npm/corsa_bind_node/ts/**/*.js",
-  "npm/corsa_bind_node/ts/**/*.js.map",
+  "src/bindings/nodejs/corsa_bind_node/index.d.ts",
+  "src/bindings/nodejs/corsa_bind_node/index.js",
+  "src/bindings/nodejs/corsa_bind_node/ts/**/*.d.ts",
+  "src/bindings/nodejs/corsa_bind_node/ts/**/*.js",
+  "src/bindings/nodejs/corsa_bind_node/ts/**/*.js.map",
 ];
 const lintIgnorePatterns = [
   ...generatedNodeArtifacts,
   "bench/fixtures/**",
-  "npm/corsa_bind_node/ts/**/*.test.ts",
+  "src/bindings/nodejs/corsa_bind_node/ts/**/*.test.ts",
 ];
 const noopCommand = 'node -e "process.exit(0)"';
 
@@ -32,7 +32,10 @@ export default defineConfig({
       skipNodeModulesBundle: true,
     },
     dts: true,
-    entry: ["npm/corsa_oxlint/ts/**/*.ts", "!npm/corsa_oxlint/ts/**/*.test.ts"],
+    entry: [
+      "src/bindings/nodejs/corsa_oxlint/ts/**/*.ts",
+      "!src/bindings/nodejs/corsa_oxlint/ts/**/*.test.ts",
+    ],
     fixedExtension: false,
     format: "esm",
     outDir: resolve(corsaOxlintDir, "dist"),
@@ -45,10 +48,7 @@ export default defineConfig({
     alias: {
       "@corsa-bind/node": resolve(nodePackageDir, "ts/index.ts"),
       "corsa-oxlint/ast-utils": resolve(corsaOxlintDir, "ts/ast_utils.ts"),
-      "corsa-oxlint/eslint-utils": resolve(
-        corsaOxlintDir,
-        "ts/eslint_utils.ts",
-      ),
+      "corsa-oxlint/eslint-utils": resolve(corsaOxlintDir, "ts/eslint_utils.ts"),
       "corsa-oxlint/json-schema": resolve(corsaOxlintDir, "ts/json_schema.ts"),
       "corsa-oxlint/rule-tester": resolve(corsaOxlintDir, "ts/rule_tester.ts"),
       "corsa-oxlint/rules": resolve(corsaOxlintDir, "ts/rules/index.ts"),
@@ -91,12 +91,12 @@ export default defineConfig({
       },
       build_node_debug: {
         command: "napi build --platform",
-        cwd: "npm/corsa_bind_node",
+        cwd: "src/bindings/nodejs/corsa_bind_node",
         dependsOn: ["build_rust"],
       },
       build_node_release: {
         command: "napi build --platform --release",
-        cwd: "npm/corsa_bind_node",
+        cwd: "src/bindings/nodejs/corsa_bind_node",
         dependsOn: ["build_rust"],
       },
       build_corsa_oxlint: {
@@ -110,13 +110,13 @@ export default defineConfig({
       build_wrapper: {
         command:
           "vp pack index.ts types.ts --dts --format esm --out-dir ../dist --sourcemap --tsconfig ../tsconfig.json --root . --deps.neverBundle ../index.js",
-        cwd: "npm/corsa_bind_node/ts",
+        cwd: "src/bindings/nodejs/corsa_bind_node/ts",
         dependsOn: ["build_node_release"],
       },
       build_wrapper_ci: {
         command:
           "vp pack index.ts types.ts --dts --format esm --out-dir ../dist --sourcemap --tsconfig ../tsconfig.json --root . --deps.neverBundle ../index.js",
-        cwd: "npm/corsa_bind_node/ts",
+        cwd: "src/bindings/nodejs/corsa_bind_node/ts",
         dependsOn: ["build_node_debug"],
       },
       lint_rust: {
@@ -141,7 +141,8 @@ export default defineConfig({
         dependsOn: ["test_rust_experimental_feature"],
       },
       test_rust_experimental_feature: {
-        command: "cargo test -p corsa_bind_rs --features experimental-distributed --test orchestrator",
+        command:
+          "cargo test -p corsa_bind_rs --features experimental-distributed --test orchestrator",
       },
       test_ts: {
         command: "vp test run --config ./vite.config.ts",
@@ -225,7 +226,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["bench/src/**/*.test.ts", "npm/**/ts/**/*.test.ts"],
+    include: ["bench/src/**/*.test.ts", "src/bindings/nodejs/**/ts/**/*.test.ts"],
     benchmark: {
       include: ["bench/src/**/*.bench.ts"],
       exclude: ["ref/**"],

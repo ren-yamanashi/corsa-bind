@@ -31,23 +31,23 @@ importers:
     dependencies:
       '@corsa-bind/node':
         specifier: workspace:*
-        version: link:../npm/corsa_bind_node
+        version: link:../src/bindings/nodejs/corsa_bind_node
       corsa-oxlint:
         specifier: workspace:*
-        version: link:../npm/corsa_oxlint
+        version: link:../src/bindings/nodejs/corsa_oxlint
 
   examples:
     dependencies:
       '@corsa-bind/node':
         specifier: workspace:*
-        version: link:../npm/corsa_bind_node
+        version: link:../src/bindings/nodejs/corsa_bind_node
       corsa-oxlint:
         specifier: workspace:*
-        version: link:../npm/corsa_oxlint
+        version: link:../src/bindings/nodejs/corsa_oxlint
 
-  npm/corsa_bind_node: {}
+  src/bindings/nodejs/corsa_bind_node: {}
 
-  npm/corsa_oxlint:
+  src/bindings/nodejs/corsa_oxlint:
     dependencies:
       '@corsa-bind/node':
         specifier: workspace:*
