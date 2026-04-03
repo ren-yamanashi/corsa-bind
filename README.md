@@ -26,8 +26,8 @@ over stdio.
 - `corsa_bind_lsp`: Rust LSP client with virtual-document support
 - `corsa_bind_orchestrator`: local worker pooling and cache reuse
 - `@corsa-bind/node`: native Node bindings built with `napi-rs`
-- `typescript/typescript`: shared TypeScript transport and response layer
-- `typescript/nodejs`, `typescript/bun`, `typescript/deno`, `typescript/browser`: runtime-specific TypeScript entrypoints
+- `src/bindings/typescript/typescript`: shared TypeScript transport and response layer
+- `src/bindings/typescript/nodejs`, `src/bindings/typescript/bun`, `src/bindings/typescript/deno`, `src/bindings/typescript/browser`: runtime-specific TypeScript entrypoints
 - `corsa-oxlint`: type-aware Oxlint helpers powered by `tsgo`
 - `corsa_bind_ref`: tooling for syncing and verifying the pinned upstream repo
 
@@ -108,6 +108,6 @@ Examples live in [`examples/`](./examples/README.md).
 - release workflow: [`docs/release_guide.md`](./docs/release_guide.md)
 - supply-chain policy: [`docs/supply_chain_policy.md`](./docs/supply_chain_policy.md)
 - Node package details: [`src/bindings/nodejs/corsa_bind_node/README.md`](./src/bindings/nodejs/corsa_bind_node/README.md)
-- TypeScript runtime layer: [`typescript/typescript/README.md`](./typescript/typescript/README.md)
-- Browser runtime layer: [`typescript/browser/README.md`](./typescript/browser/README.md)
+- TypeScript runtime layer: [`src/bindings/typescript/typescript/README.md`](./src/bindings/typescript/typescript/README.md)
+- Browser runtime layer: [`src/bindings/typescript/browser/README.md`](./src/bindings/typescript/browser/README.md)
 - `corsa-oxlint` details: [`src/bindings/nodejs/corsa_oxlint/README.md`](./src/bindings/nodejs/corsa_oxlint/README.md)

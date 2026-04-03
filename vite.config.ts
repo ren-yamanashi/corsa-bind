@@ -46,12 +46,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@corsa-bind/browser": resolve(rootDir, "typescript/browser/index.ts"),
-      "@corsa-bind/bun": resolve(rootDir, "typescript/bun/index.ts"),
-      "@corsa-bind/deno": resolve(rootDir, "typescript/deno/mod.ts"),
+      "@corsa-bind/browser": resolve(rootDir, "src/bindings/typescript/browser/index.ts"),
+      "@corsa-bind/bun": resolve(rootDir, "src/bindings/typescript/bun/index.ts"),
+      "@corsa-bind/deno": resolve(rootDir, "src/bindings/typescript/deno/mod.ts"),
       "@corsa-bind/node": resolve(nodePackageDir, "ts/index.ts"),
-      "@corsa-bind/nodejs": resolve(rootDir, "typescript/nodejs/index.ts"),
-      "@corsa-bind/typescript": resolve(rootDir, "typescript/typescript/index.ts"),
+      "@corsa-bind/nodejs": resolve(rootDir, "src/bindings/typescript/nodejs/index.ts"),
+      "@corsa-bind/typescript": resolve(rootDir, "src/bindings/typescript/typescript/index.ts"),
       "corsa-oxlint/ast-utils": resolve(corsaOxlintDir, "ts/ast_utils.ts"),
       "corsa-oxlint/eslint-utils": resolve(corsaOxlintDir, "ts/eslint_utils.ts"),
       "corsa-oxlint/json-schema": resolve(corsaOxlintDir, "ts/json_schema.ts"),
