@@ -79,11 +79,21 @@ export default defineConfig({
       },
       build: {
         command: noopCommand,
-        dependsOn: ["build_mock", "build_wrapper", "build_corsa_oxlint"],
+        dependsOn: [
+          "build_mock",
+          "build_wrapper",
+          "build_corsa_oxlint",
+          "build_typescript_packages",
+        ],
       },
       build_ci: {
         command: noopCommand,
-        dependsOn: ["build_mock", "build_wrapper_ci", "build_corsa_oxlint_ci"],
+        dependsOn: [
+          "build_mock",
+          "build_wrapper_ci",
+          "build_corsa_oxlint_ci",
+          "build_typescript_packages",
+        ],
       },
       build_rust: {
         command: "cargo build --workspace",
@@ -111,6 +121,45 @@ export default defineConfig({
       build_corsa_oxlint_ci: {
         command: "vp pack",
         dependsOn: ["build_wrapper_ci"],
+      },
+      build_typescript_packages: {
+        command: noopCommand,
+        dependsOn: [
+          "build_typescript_shared",
+          "build_typescript_browser",
+          "build_typescript_deno",
+          "build_typescript_nodejs",
+          "build_typescript_bun",
+        ],
+      },
+      build_typescript_shared: {
+        command:
+          "vp pack index.ts --dts --format esm --out-dir ./dist --sourcemap --tsconfig ../../../../tsconfig.json --root .",
+        cwd: "src/bindings/typescript/typescript",
+      },
+      build_typescript_browser: {
+        command:
+          "vp pack index.ts --dts --format esm --out-dir ./dist --sourcemap --tsconfig ../../../../tsconfig.json --root . --deps.never-bundle @corsa-bind/typescript",
+        cwd: "src/bindings/typescript/browser",
+        dependsOn: ["build_typescript_shared"],
+      },
+      build_typescript_deno: {
+        command:
+          "vp pack mod.ts --dts --format esm --out-dir ./dist --sourcemap --tsconfig ../../../../tsconfig.json --root . --deps.never-bundle @corsa-bind/typescript",
+        cwd: "src/bindings/typescript/deno",
+        dependsOn: ["build_typescript_shared"],
+      },
+      build_typescript_nodejs: {
+        command:
+          "vp pack index.ts --dts --format esm --out-dir ./dist --sourcemap --tsconfig ../../../../tsconfig.json --root . --deps.never-bundle @corsa-bind/node --deps.never-bundle @corsa-bind/typescript",
+        cwd: "src/bindings/typescript/nodejs",
+        dependsOn: ["build_typescript_shared"],
+      },
+      build_typescript_bun: {
+        command:
+          "vp pack index.ts --dts --format esm --out-dir ./dist --sourcemap --tsconfig ../../../../tsconfig.json --root . --deps.never-bundle @corsa-bind/nodejs",
+        cwd: "src/bindings/typescript/bun",
+        dependsOn: ["build_typescript_nodejs"],
       },
       build_wrapper: {
         command:
@@ -196,6 +245,23 @@ export default defineConfig({
       release_dry_run: {
         command: "node --strip-types ./scripts/release_dry_run.ts",
         dependsOn: ["build"],
+      },
+      release_preflight: {
+        command: noopCommand,
+        dependsOn: [
+          "fmt_check_rust",
+          "lint_rust",
+          "test",
+          "verify_origin",
+          "bench_verify",
+          "release_dry_run",
+        ],
+      },
+      publish_rust: {
+        command: "node --strip-types ./scripts/publish_rust.ts",
+      },
+      publish_npm: {
+        command: "node --strip-types ./scripts/publish_npm.ts",
       },
       examples_node_smoke: {
         command: "pnpm run smoke",

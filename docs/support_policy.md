@@ -9,6 +9,7 @@ The supported production surface is currently:
 
 - local Rust API clients
 - published Node bindings for the documented prebuilt targets
+- published TypeScript runtime packages for the documented entrypoints
 - LSP stdio integrations
 - local worker orchestration and cache reuse
 

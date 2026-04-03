@@ -8,6 +8,7 @@ The current production target is:
 
 - local Rust and Node API clients
 - published Node bindings with prebuilt packages for supported targets
+- published TypeScript runtime packages for shared, browser, Deno, Node.js, and Bun entrypoints
 - LSP stdio integrations
 - local worker orchestration and cache reuse
 

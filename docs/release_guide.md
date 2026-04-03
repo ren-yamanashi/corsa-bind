@@ -22,10 +22,21 @@ Internal Rust crates:
 Public npm packages:
 
 - `@corsa-bind/node` (`src/bindings/nodejs/corsa_bind_node`)
+- `@corsa-bind/typescript` (`src/bindings/typescript/typescript`)
+- `@corsa-bind/browser` (`src/bindings/typescript/browser`)
+- `@corsa-bind/deno` (`src/bindings/typescript/deno`)
+- `@corsa-bind/nodejs` (`src/bindings/typescript/nodejs`)
+- `@corsa-bind/bun` (`src/bindings/typescript/bun`)
 - `corsa-oxlint` (`src/bindings/nodejs/corsa_oxlint`)
 
-The npm packages do not bundle the `typescript-go` executable. Consumers must
-point them at a compatible `tsgo` binary at runtime.
+Other bindings:
+
+- C, Go, Zig, and MoonBit are source-distributed today
+- they are not wired into registry publishing automation yet
+- versioned git tags and GitHub releases remain the release vehicle for those surfaces for now
+
+The npm packages do not bundle the Corsa executable. Consumers must point them
+at a compatible upstream `typescript-go` binary at runtime.
 
 `@corsa-bind/node` is built with `napi-rs`. The publish workflow now ships
 the root package plus target-specific native binary packages for:
@@ -58,7 +69,12 @@ Publish crates in dependency order:
 Publish npm packages in dependency order:
 
 1. `@corsa-bind/node`
-2. `corsa-oxlint`
+2. `@corsa-bind/typescript`
+3. `@corsa-bind/browser`
+4. `@corsa-bind/deno`
+5. `@corsa-bind/nodejs`
+6. `@corsa-bind/bun`
+7. `corsa-oxlint`
 
 ## Dry Run
 
@@ -73,10 +89,17 @@ This performs:
 - `cargo package` for every public Rust crate
 - a temporary workspace patch overlay so interdependent unpublished crates can be packaged before the first crates.io release
 - staging of the JS-only `@corsa-bind/node` root package plus any locally available native binary packages
+- `pnpm pack` for the TypeScript runtime packages under `src/bindings/typescript/*`
 - `pnpm pack` for each publishable npm package so `workspace:*` ranges are rewritten exactly as they will be for publish
 - `npm publish --dry-run <tarball>` for the packed npm tarballs
 
 CI also runs the same release dry-run workflow.
+
+## Release Surface Matrix
+
+- Rust crates: crates.io, automated by `scripts/publish_rust.ts` and `publish-rust.yml`
+- Node native package plus TypeScript runtime packages and `corsa-oxlint`: npm, automated by `scripts/publish_npm.ts` and `publish-npm.yml`
+- C, Go, Zig, and MoonBit bindings: source-distributed today, released via git tags and GitHub releases after validating the shared Rust C ABI
 
 ## Release Checks
 
@@ -93,7 +116,7 @@ Before publishing Rust crates:
 Before publishing npm packages, run the same gates plus a fresh `vp run -w build`.
 The GitHub publish workflow fan-outs native binding builds per target, downloads
 those `.node` artifacts into the publish job, and only then publishes the root
-package and `corsa-oxlint`.
+package, the TypeScript runtime packages, and `corsa-oxlint`.
 
 ## Trusted Publishing
 
@@ -139,7 +162,9 @@ publishing can take over.
 
 ```bash
 cargo login
-node --strip-types ./scripts/publish_rust.ts
+vp check
+vp run -w release_preflight
+vp run -w publish_rust
 ```
 
 This publishes the public crates in dependency order with the same sequencing
@@ -150,7 +175,7 @@ waits until the reported retry time and continues automatically. If the process
 stops midway, resume from the first missing crate:
 
 ```bash
-CARGO_PUBLISH_START_AT=corsa_bind_rs node --strip-types ./scripts/publish_rust.ts
+CARGO_PUBLISH_START_AT=corsa_bind_rs vp run -w publish_rust
 ```
 
 ### npm
@@ -158,8 +183,9 @@ CARGO_PUBLISH_START_AT=corsa_bind_rs node --strip-types ./scripts/publish_rust.t
 ```bash
 npm login
 vp install
-vp run -w build
-NAPI_ARTIFACTS_DIR=./artifacts node --strip-types ./scripts/publish_npm.ts
+vp check
+vp run -w release_preflight
+NAPI_ARTIFACTS_DIR=./artifacts vp run -w publish_npm
 ```
 
 This packs each workspace package through `pnpm pack`, then publishes the
@@ -183,8 +209,26 @@ this first manual publish.
 If a publish partially succeeds, rerun from the first missing package:
 
 ```bash
-NPM_PUBLISH_START_AT=corsa-oxlint NAPI_ARTIFACTS_DIR=./artifacts node --strip-types ./scripts/publish_npm.ts
+NPM_PUBLISH_START_AT=@corsa-bind/typescript NAPI_ARTIFACTS_DIR=./artifacts vp run -w publish_npm
 ```
+
+### Other Bindings
+
+These bindings are not registry-published yet:
+
+- `src/bindings/c`
+- `src/bindings/go`
+- `src/bindings/zig`
+- `src/bindings/moonbit`
+
+For now, treat the Rust C ABI as the canonical release unit:
+
+```bash
+cargo build -p corsa_bind_c
+```
+
+Then cut a version tag and GitHub release that includes the updated headers,
+FFI wrapper sources, and any usage notes for the downstream language surface.
 
 ## Changelog Expectations
 
@@ -202,7 +246,7 @@ Workflows:
 - `CI`: quality, experimental-surface validation, real-`tsgo` smoke, and benchmark verification
 - `Release Dry Run`: validates publishable artifacts without publishing them
 - `Publish Rust`: crates.io trusted publish path for the public Rust crates after the initial manual release
-- `Publish npm`: npm trusted publish path for the public npm packages after the initial manual release
+- `Publish npm`: npm trusted publish path for the Node, TypeScript, and Oxlint packages after the initial manual release
 - `Supply Chain`: runs dependency policy checks
 
 The publish workflows are intentionally separate from the dry run so that

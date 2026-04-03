@@ -1,2 +1,2 @@
-export { default } from "../nodejs/index.ts";
-export * from "../nodejs/index.ts";
+export { default } from "@corsa-bind/nodejs";
+export * from "@corsa-bind/nodejs";

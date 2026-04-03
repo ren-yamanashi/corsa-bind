@@ -59,6 +59,35 @@ importers:
         specifier: 1.57.0
         version: 1.57.0(oxlint-tsgolint@0.17.3)
 
+  src/bindings/typescript/browser:
+    dependencies:
+      '@corsa-bind/typescript':
+        specifier: workspace:*
+        version: link:../typescript
+
+  src/bindings/typescript/bun:
+    dependencies:
+      '@corsa-bind/nodejs':
+        specifier: workspace:*
+        version: link:../nodejs
+
+  src/bindings/typescript/deno:
+    dependencies:
+      '@corsa-bind/typescript':
+        specifier: workspace:*
+        version: link:../typescript
+
+  src/bindings/typescript/nodejs:
+    dependencies:
+      '@corsa-bind/node':
+        specifier: workspace:*
+        version: link:../../nodejs/corsa_bind_node
+      '@corsa-bind/typescript':
+        specifier: workspace:*
+        version: link:../typescript
+
+  src/bindings/typescript/typescript: {}
+
 packages:
 
   '@emnapi/core@1.9.1':

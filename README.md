@@ -87,6 +87,37 @@ vp run -w bench_native
 vp run -w bench_ts
 ```
 
+## Publishing
+
+First manual Rust publish:
+
+```bash
+cargo login
+vp check
+vp run -w release_preflight
+vp run -w publish_rust
+```
+
+First manual npm publish for `@corsa-bind/node`, the TypeScript packages, and
+`corsa-oxlint`:
+
+```bash
+npm login
+vp install
+vp check
+vp run -w release_preflight
+NAPI_ARTIFACTS_DIR=./artifacts vp run -w publish_npm
+```
+
+`src/bindings/typescript/typescript`, `src/bindings/typescript/browser`,
+`src/bindings/typescript/deno`, `src/bindings/typescript/nodejs`, and
+`src/bindings/typescript/bun` all publish through that npm path.
+
+`src/bindings/c`, `src/bindings/go`, `src/bindings/zig`, and
+`src/bindings/moonbit` are still source-distributed today. Their release
+vehicle is a tagged GitHub release built around the Rust C ABI rather than a
+registry publish flow.
+
 ## Examples
 
 Examples live in [`examples/`](./examples/README.md).
@@ -108,7 +139,7 @@ Examples live in [`examples/`](./examples/README.md).
 
 - default API transport is msgpack over stdio
 - unstable upstream endpoints such as `printNode` are opt-in
-- published npm packages expect a caller-managed `typescript-go` executable
+- published npm packages expect a caller-managed upstream Corsa executable
 - the distributed layer is still behind the `experimental-distributed` cargo feature
 
 ## More Docs

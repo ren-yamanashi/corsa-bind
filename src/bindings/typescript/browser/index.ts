@@ -4,6 +4,6 @@ export {
   RemoteCorsaApiClient,
   type FetchTransportOptions,
   type CorsaRemoteTransport,
-} from "../typescript/index.ts";
+} from "@corsa-bind/typescript";
 
-export type * from "../typescript/types.ts";
+export type * from "@corsa-bind/typescript";

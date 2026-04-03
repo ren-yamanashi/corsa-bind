@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import {
+  existsSync,
   copyFileSync,
   cpSync,
   mkdtempSync,
@@ -57,6 +58,7 @@ interface NodeBindingManifest extends Record<string, unknown> {
   bugs?: Record<string, unknown>;
   description?: string;
   engines?: Record<string, unknown>;
+  exports?: unknown;
   files?: string[];
   homepage?: string;
   keywords?: string[];
@@ -73,6 +75,7 @@ interface NodeBindingManifest extends Record<string, unknown> {
   libc?: string[];
   publishConfig?: Record<string, unknown>;
   repository?: Record<string, unknown>;
+  types?: string;
   version: string;
 }
 
@@ -93,7 +96,45 @@ export const corsaOxlintPackage: PublishablePackage = {
   path: resolve(rootDir, "src/bindings/nodejs/corsa_oxlint"),
 };
 
-export const npmPackages = [nodeBindingPackage, corsaOxlintPackage];
+export const typescriptSharedPackage: PublishablePackage = {
+  access: "public",
+  name: "@corsa-bind/typescript",
+  path: resolve(rootDir, "src/bindings/typescript/typescript"),
+};
+
+export const typescriptBrowserPackage: PublishablePackage = {
+  access: "public",
+  name: "@corsa-bind/browser",
+  path: resolve(rootDir, "src/bindings/typescript/browser"),
+};
+
+export const typescriptDenoPackage: PublishablePackage = {
+  access: "public",
+  name: "@corsa-bind/deno",
+  path: resolve(rootDir, "src/bindings/typescript/deno"),
+};
+
+export const typescriptNodeJsPackage: PublishablePackage = {
+  access: "public",
+  name: "@corsa-bind/nodejs",
+  path: resolve(rootDir, "src/bindings/typescript/nodejs"),
+};
+
+export const typescriptBunPackage: PublishablePackage = {
+  access: "public",
+  name: "@corsa-bind/bun",
+  path: resolve(rootDir, "src/bindings/typescript/bun"),
+};
+
+export const typescriptPackages = [
+  typescriptSharedPackage,
+  typescriptBrowserPackage,
+  typescriptDenoPackage,
+  typescriptNodeJsPackage,
+  typescriptBunPackage,
+];
+
+export const npmPackages = [nodeBindingPackage, ...typescriptPackages, corsaOxlintPackage];
 
 const defaultTargetTriples = [
   "x86_64-pc-windows-msvc",
@@ -179,6 +220,45 @@ export function assertPublishablePackageManifest(pkg: PublishablePackage): void 
     throw new Error(
       `Publish manifest mismatch for ${pkg.path}: expected ${pkg.name}, found ${manifest.name}`,
     );
+  }
+
+  const entryPaths = new Set<string>();
+  const addEntryPath = (entry: unknown): void => {
+    if (typeof entry === "string") {
+      if (
+        entry.startsWith("node:") ||
+        entry.startsWith("http://") ||
+        entry.startsWith("https://") ||
+        entry.startsWith("#")
+      ) {
+        return;
+      }
+      entryPaths.add(entry.startsWith("./") ? entry.slice(2) : entry);
+      return;
+    }
+
+    if (Array.isArray(entry)) {
+      for (const item of entry) {
+        addEntryPath(item);
+      }
+      return;
+    }
+
+    if (entry && typeof entry === "object") {
+      for (const value of Object.values(entry)) {
+        addEntryPath(value);
+      }
+    }
+  };
+
+  addEntryPath(manifest.main);
+  addEntryPath(manifest.types);
+  addEntryPath(manifest.exports);
+
+  for (const entryPath of entryPaths) {
+    if (entryPath.length === 0 || !existsSync(resolve(pkg.path, entryPath))) {
+      throw new Error(`Publish manifest for ${pkg.name} references a missing file: ${entryPath}`);
+    }
   }
 }
 

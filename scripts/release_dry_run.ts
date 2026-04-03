@@ -5,6 +5,7 @@ import { resolve } from "node:path";
 import {
   publishPackedTarball,
   corsaOxlintPackage,
+  typescriptPackages,
   withStagedNodeBindingPackages,
 } from "./npm_release_utils.ts";
 import { fail, rootDir, runCommand } from "./shared.ts";
@@ -102,7 +103,12 @@ async function main(): Promise<void> {
   await withStagedNodeBindingPackages(
     { requireAllTargets: false },
     async ({ binaryPackages, rootPackage }) => {
-      for (const npmPackage of [...binaryPackages, rootPackage, corsaOxlintPackage]) {
+      for (const npmPackage of [
+        ...binaryPackages,
+        rootPackage,
+        ...typescriptPackages,
+        corsaOxlintPackage,
+      ]) {
         publishPackedTarball(npmPackage, { dryRun: true });
       }
     },
