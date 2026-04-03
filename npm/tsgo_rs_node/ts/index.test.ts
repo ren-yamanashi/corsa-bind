@@ -7,6 +7,13 @@ import {
   TsgoApiClient,
   TsgoDistributedOrchestrator,
   TsgoVirtualDocument,
+  classifyTypeText,
+  isAnyLikeTypeTexts,
+  isArrayLikeTypeTexts,
+  isErrorLikeTypeTexts,
+  isPromiseLikeTypeTexts,
+  splitTopLevelTypeText,
+  splitTypeText,
   isUnsafeAssignment,
   isUnsafeReturn,
 } from "./index";
@@ -38,6 +45,25 @@ describe("TsgoApiClient", () => {
         targetTypeTexts: ["Promise<string>"],
       }),
     ).toBe(true);
+  });
+
+  it("exposes Rust-backed type-text utilities", () => {
+    expect(classifyTypeText('"value"')).toBe("string");
+    expect(classifyTypeText("42n")).toBe("bigint");
+    expect(splitTopLevelTypeText("Promise<string | number> | null", "|")).toEqual([
+      "Promise<string | number>",
+      "null",
+    ]);
+    expect(splitTypeText("string | Promise<Array<number>> & undefined")).toEqual([
+      "string",
+      "Promise<Array<number>>",
+      "undefined",
+    ]);
+    expect(isArrayLikeTypeTexts(["ReadonlyArray<string>"])).toBe(true);
+    expect(isPromiseLikeTypeTexts(["Promise<string>"])).toBe(true);
+    expect(isPromiseLikeTypeTexts([], ["then"])).toBe(true);
+    expect(isErrorLikeTypeTexts(["TypeError"])).toBe(true);
+    expect(isAnyLikeTypeTexts(["any"])).toBe(true);
   });
 
   it("roundtrips through the mock tsgo binary", () => {

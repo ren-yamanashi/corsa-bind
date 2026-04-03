@@ -1,6 +1,19 @@
 import type { Node } from "@oxlint/plugins";
 
 import { ESLintUtils } from "../eslint_utils";
+import {
+  classifyTypeText as classifyTypeTextFromRust,
+  isAnyLikeTypeTexts,
+  isArrayLikeTypeTexts,
+  isBigIntLikeTypeTexts,
+  isErrorLikeTypeTexts,
+  isNumberLikeTypeTexts,
+  isPromiseLikeTypeTexts,
+  isStringLikeTypeTexts,
+  isUnknownLikeTypeTexts,
+  splitTopLevelTypeText as splitTopLevelTypeTextFromRust,
+  splitTypeText as splitTypeTextFromRust,
+} from "../utils";
 import { isIdentifierNamed, memberPropertyName, stripChainExpression } from "./ast";
 import type { ContextWithParserOptions, TsgoType, TsgoTypeCheckerShape } from "../types";
 
@@ -90,13 +103,12 @@ export function isPromiseLikeNode(
   ) {
     return true;
   }
-  for (const text of [typeTextAtNode(context, node), symbolTypeTextAtNode(context, node)]) {
-    if (text?.includes("Promise") || text?.includes("Thenable")) {
-      return true;
-    }
-  }
-  const properties = new Set(propertyNamesOfNode(context, node));
-  return properties.has("then");
+  return isPromiseLikeTypeTexts(
+    [typeTextAtNode(context, node), symbolTypeTextAtNode(context, node)].filter(
+      (text): text is string => Boolean(text),
+    ),
+    propertyNamesOfNode(context, node),
+  );
 }
 
 export function isArrayLikeNode(
@@ -107,25 +119,14 @@ export function isArrayLikeNode(
   if (current?.type === "ArrayExpression") {
     return true;
   }
-  for (const text of typeTextsAtNode(context, node)) {
-    if (
-      text &&
-      (text.endsWith("[]") ||
-        text.startsWith("Array<") ||
-        text.startsWith("ReadonlyArray<") ||
-        (text.startsWith("[") && text.endsWith("]")))
-    ) {
-      return true;
-    }
-  }
-  return false;
+  return isArrayLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function isStringLikeNode(
   context: ContextWithParserOptions,
   node: Node | { readonly range: readonly [number, number] },
 ): boolean {
-  return typeTextsAtNode(context, node).some((text) => classifyTypeText(text) === "string");
+  return isStringLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function isErrorLikeNode(
@@ -140,27 +141,21 @@ export function isErrorLikeNode(
       return true;
     }
   }
-  for (const text of typeTextsAtNode(context, node)) {
-    if (text === "Error" || text?.endsWith("Error")) {
-      return true;
-    }
-  }
-  const properties = new Set(propertyNamesOfNode(context, node));
-  return properties.has("message") && properties.has("name");
+  return isErrorLikeTypeTexts(typeTextsAtNode(context, node), propertyNamesOfNode(context, node));
 }
 
 export function isNumberLikeNode(
   context: ContextWithParserOptions,
   node: Node | { readonly range: readonly [number, number] },
 ): boolean {
-  return typeTextsAtNode(context, node).some((text) => classifyTypeText(text) === "number");
+  return isNumberLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function isBigIntLikeNode(
   context: ContextWithParserOptions,
   node: Node | { readonly range: readonly [number, number] },
 ): boolean {
-  return typeTextsAtNode(context, node).some((text) => classifyTypeText(text) === "bigint");
+  return isBigIntLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function isAnyLikeNode(
@@ -171,7 +166,7 @@ export function isAnyLikeNode(
   if (current?.type === "TSAsExpression" && current.typeAnnotation?.type === "TSAnyKeyword") {
     return true;
   }
-  return typeTextsAtNode(context, node).some((text) => classifyTypeText(text) === "any");
+  return isAnyLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function isUnknownLikeNode(
@@ -182,7 +177,7 @@ export function isUnknownLikeNode(
   if (current?.type === "TSAsExpression" && current.typeAnnotation?.type === "TSUnknownKeyword") {
     return true;
   }
-  return typeTextsAtNode(context, node).some((text) => classifyTypeText(text) === "unknown");
+  return isUnknownLikeTypeTexts(typeTextsAtNode(context, node));
 }
 
 export function typeTextsAtNode(
@@ -211,40 +206,13 @@ export function typeTextsAtNode(
 export function classifyTypeText(
   text: string | undefined,
 ): "any" | "bigint" | "boolean" | "nullish" | "number" | "regexp" | "string" | "unknown" | "other" {
-  if (!text) {
-    return "other";
-  }
-  if (text === "any") {
-    return "any";
-  }
-  if (text === "unknown" || text === "never") {
-    return "unknown";
-  }
-  if (text === "string" || isQuotedStringLiteral(text)) {
-    return "string";
-  }
-  if (text === "number" || /^-?\d+(\.\d+)?$/.test(text)) {
-    return "number";
-  }
-  if (text === "bigint" || /^-?\d+n$/.test(text)) {
-    return "bigint";
-  }
-  if (text === "boolean" || text === "true" || text === "false") {
-    return "boolean";
-  }
-  if (text === "null" || text === "undefined" || text.includes("null |")) {
-    return "nullish";
-  }
-  if (text.includes("RegExp")) {
-    return "regexp";
-  }
-  return "other";
+  return classifyTypeTextFromRust(text);
 }
 
-function isQuotedStringLiteral(text: string): boolean {
-  return (
-    (text.startsWith('"') && text.endsWith('"')) ||
-    (text.startsWith("'") && text.endsWith("'")) ||
-    (text.startsWith("`") && text.endsWith("`"))
-  );
+export function splitTopLevelTypeText(text: string, delimiter: "|" | "&" | ","): readonly string[] {
+  return splitTopLevelTypeTextFromRust(text, delimiter);
+}
+
+export function splitTypeText(text: string): readonly string[] {
+  return splitTypeTextFromRust(text);
 }

@@ -50,6 +50,7 @@ export default defineConfig({
         "ts/eslint_utils.ts",
       ),
       "oxlint-plugin-typescript-go/json-schema": resolve(typescriptOxlintDir, "ts/json_schema.ts"),
+      "oxlint-plugin-typescript-go/utils": resolve(typescriptOxlintDir, "ts/utils.ts"),
       "oxlint-plugin-typescript-go/rule-tester": resolve(typescriptOxlintDir, "ts/rule_tester.ts"),
       "oxlint-plugin-typescript-go/rules": resolve(typescriptOxlintDir, "ts/rules/index.ts"),
       "oxlint-plugin-typescript-go/ts-eslint": resolve(typescriptOxlintDir, "ts/ts_eslint.ts"),

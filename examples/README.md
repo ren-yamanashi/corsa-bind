@@ -6,6 +6,17 @@ These examples are split into three groups:
 - `examples/rust/*`: executable Rust samples
 - `examples/typescript_oxlint/*`: reusable `oxlint-plugin-typescript-go` rule/plugin/config samples
 
+If you are picking a first example, use this quick map:
+
+| Goal                                         | Node                                      | Rust                                          |
+| -------------------------------------------- | ----------------------------------------- | --------------------------------------------- |
+| edit in-memory documents                     | `minimal_start.ts`, `virtual_document.ts` | `minimal_start.rs`, `virtual_document.rs`     |
+| inspect symbols, types, and signatures       | `checker_queries.ts`                      | `checker_queries.rs`                          |
+| drive snapshot queries with a mock server    | `mock_client.ts`, `raw_calls.ts`          | `mock_client.rs`                              |
+| exercise orchestration and observability     | `distributed_orchestrator.ts`             | `orchestrator_cache.rs`, `observer_events.rs` |
+| use upstream-only printer APIs intentionally | -                                         | `print_node_opt_in.rs`                        |
+| author type-aware Oxlint rules               | `typescript_oxlint/*`                     | -                                             |
+
 ## Prerequisites
 
 Build the workspace packages and native bindings first:
@@ -69,9 +80,11 @@ cargo run -p tsgo_rs --example minimal_start
 
 These examples use the repo-local `mock_tsgo` binary so you can exercise realistic API and LSP flows without building the real upstream server.
 
+- `examples/nodejs/checker_queries.ts`: advanced checker walkthrough using `callJson()` for symbols, types, signatures, and relation endpoints
 - `examples/nodejs/mock_client.ts`: high-level mock API roundtrip through `TsgoApiClient`
 - `examples/nodejs/raw_calls.ts`: low-level `callJson()` / `callBinary()` escape hatches for custom endpoints
 - `examples/nodejs/distributed_orchestrator.ts`: in-process distributed state replication for virtual documents
+- `examples/rust/checker_queries.rs`: typed symbol/type/signature traversal with parsed declaration handles and relation helpers
 - `examples/rust/mock_client.rs`: typed snapshot, source-file, and type-string queries through the Rust API client
 - `examples/rust/filesystem_callbacks.rs`: custom `ApiFileSystem` callbacks with a virtualized workspace
 - `examples/rust/lsp_overlay.rs`: `LspClient` plus `LspOverlay` for `didOpen` / `didChange` / `didClose`
@@ -81,8 +94,22 @@ These examples use the repo-local `mock_tsgo` binary so you can exercise realist
 Run one of them directly with:
 
 ```bash
+pnpm --dir examples run checker-queries
 pnpm --dir examples run raw-calls
+cargo run -p tsgo_rs --example checker_queries
 cargo run -p tsgo_rs --example lsp_overlay
+```
+
+## Opt-In Upstream Printer
+
+This example is separate because it demonstrates an upstream endpoint that is intentionally opt-in.
+
+- `examples/rust/print_node_opt_in.rs`: enables `allow_unstable_upstream_calls`, turns a type into a serialized node, and renders it through `printNode`
+
+Run it with:
+
+```bash
+cargo run -p tsgo_rs --example print_node_opt_in
 ```
 
 ## Real Pinned `tsgo`

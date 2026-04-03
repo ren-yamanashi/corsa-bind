@@ -14,6 +14,7 @@ pub mod fast;
 mod observability;
 mod process;
 mod rpc;
+pub mod utils;
 
 pub use error::{Result, TsgoError};
 pub use observability::{SharedObserver, TsgoEvent, TsgoObserver, observe};

@@ -64,6 +64,17 @@ export interface UnsafeTypeFlowInput {
   targetTypeTexts?: readonly string[];
 }
 
+export type TypeTextKind =
+  | "any"
+  | "bigint"
+  | "boolean"
+  | "nullish"
+  | "number"
+  | "regexp"
+  | "string"
+  | "unknown"
+  | "other";
+
 export interface VirtualChange {
   range?: {
     start: { line: number; character: number };

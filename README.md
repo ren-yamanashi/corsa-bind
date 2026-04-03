@@ -107,7 +107,9 @@ still target Node `22+`.
 ## Examples
 
 The repository now ships executable examples for Rust, `@tsgo-rs/node`, and
-`oxlint-plugin-typescript-go` under [`examples/`](./examples/README.md).
+`oxlint-plugin-typescript-go` under [`examples/`](./examples/README.md), from
+minimal virtual-document edits up through checker-query walkthroughs and
+opt-in upstream printer flows.
 
 Run the smoke-tested examples with:
 

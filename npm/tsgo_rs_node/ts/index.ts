@@ -4,6 +4,7 @@ import type {
   ApiClientOptions,
   ConfigResponse,
   InitializeResponse,
+  TypeTextKind,
   TypeResponse,
   UnsafeTypeFlowInput,
   UpdateSnapshotParams,
@@ -35,6 +36,70 @@ export function isUnsafeAssignment(input: UnsafeTypeFlowInput): boolean {
 export function isUnsafeReturn(input: UnsafeTypeFlowInput): boolean {
   return binding.isUnsafeReturn(toJson(input));
 }
+
+export function classifyTypeText(text?: string): TypeTextKind {
+  return binding.classifyTypeText(text) as TypeTextKind;
+}
+
+export function splitTopLevelTypeText(text: string, delimiter: string): string[] {
+  return binding.splitTopLevelTypeText(text, delimiter);
+}
+
+export function splitTypeText(text: string): string[] {
+  return binding.splitTypeText(text);
+}
+
+export function isStringLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isStringLikeTypeTexts([...typeTexts]);
+}
+
+export function isNumberLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isNumberLikeTypeTexts([...typeTexts]);
+}
+
+export function isBigIntLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isBigIntLikeTypeTexts([...typeTexts]);
+}
+
+export function isAnyLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isAnyLikeTypeTexts([...typeTexts]);
+}
+
+export function isUnknownLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isUnknownLikeTypeTexts([...typeTexts]);
+}
+
+export function isArrayLikeTypeTexts(typeTexts: readonly string[]): boolean {
+  return binding.isArrayLikeTypeTexts([...typeTexts]);
+}
+
+export function isPromiseLikeTypeTexts(
+  typeTexts: readonly string[],
+  propertyNames: readonly string[] = [],
+): boolean {
+  return binding.isPromiseLikeTypeTexts([...typeTexts], [...propertyNames]);
+}
+
+export function isErrorLikeTypeTexts(
+  typeTexts: readonly string[],
+  propertyNames: readonly string[] = [],
+): boolean {
+  return binding.isErrorLikeTypeTexts([...typeTexts], [...propertyNames]);
+}
+
+export const Utils = Object.freeze({
+  classifyTypeText,
+  splitTopLevelTypeText,
+  splitTypeText,
+  isStringLikeTypeTexts,
+  isNumberLikeTypeTexts,
+  isBigIntLikeTypeTexts,
+  isAnyLikeTypeTexts,
+  isUnknownLikeTypeTexts,
+  isArrayLikeTypeTexts,
+  isPromiseLikeTypeTexts,
+  isErrorLikeTypeTexts,
+});
 
 export class TsgoApiClient {
   readonly #inner: NativeApiClient;

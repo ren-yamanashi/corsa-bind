@@ -20,4 +20,14 @@ describe("api surface", () => {
     expect(typeof main.rules.typescriptOxlintPlugin).toBe("object");
     expect(rules.implementedNativeRuleNames).toContain("restrict-plus-operands");
   });
+
+  it("re-exports Rust-backed utility helpers from the root entry", () => {
+    expect(main.Utils.classifyTypeText("Promise<string>")).toBe("other");
+    expect(main.Utils.isPromiseLikeTypeTexts(["Promise<string>"])).toBe(true);
+    expect(main.Utils.splitTypeText("string | number & bigint")).toEqual([
+      "string",
+      "number",
+      "bigint",
+    ]);
+  });
 });

@@ -10,6 +10,7 @@
 //!   distributed helpers
 //! - [`observability`] for structured runtime events
 //! - [`runtime`] for the lightweight in-house executor
+//! - [`utils`] for shared type-text and checker-adjacent helpers
 //!
 //! # Examples
 //!
@@ -80,6 +81,11 @@ pub mod process {
 /// Re-exports the lightweight in-house runtime.
 pub mod runtime {
     pub use tsgo_rs_runtime::*;
+}
+
+/// Re-exports shared pure utility helpers.
+pub mod utils {
+    pub use tsgo_rs_core::utils::*;
 }
 
 pub use tsgo_rs_core::{Result, SharedObserver, TsgoError, TsgoEvent, TsgoObserver};

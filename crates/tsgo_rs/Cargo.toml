@@ -44,6 +44,10 @@ name = "mock_client"
 path = "../../examples/rust/mock_client.rs"
 
 [[example]]
+name = "checker_queries"
+path = "../../examples/rust/checker_queries.rs"
+
+[[example]]
 name = "filesystem_callbacks"
 path = "../../examples/rust/filesystem_callbacks.rs"
 
@@ -58,6 +62,10 @@ path = "../../examples/rust/orchestrator_cache.rs"
 [[example]]
 name = "observer_events"
 path = "../../examples/rust/observer_events.rs"
+
+[[example]]
+name = "print_node_opt_in"
+path = "../../examples/rust/print_node_opt_in.rs"
 
 [[example]]
 name = "real_snapshot"

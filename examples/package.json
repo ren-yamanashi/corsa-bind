@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "smoke": "node --strip-types ./smoke.ts",
+    "checker-queries": "node --strip-types ./nodejs/checker_queries.ts",
     "minimal-start": "node --strip-types ./nodejs/minimal_start.ts",
     "mock-client": "node --strip-types ./nodejs/mock_client.ts",
     "raw-calls": "node --strip-types ./nodejs/raw_calls.ts",

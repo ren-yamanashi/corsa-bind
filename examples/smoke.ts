@@ -1,3 +1,4 @@
+import { runCheckerQueriesExample } from "./nodejs/checker_queries.ts";
 import { runDistributedOrchestratorExample } from "./nodejs/distributed_orchestrator.ts";
 import { runMinimalStartExample } from "./nodejs/minimal_start.ts";
 import { runMockClientExample } from "./nodejs/mock_client.ts";
@@ -24,6 +25,7 @@ const result = {
     (noStringPlusNumberRule as { meta?: { docs?: { description?: string } } }).meta?.docs
       ?.description ?? null,
   customRuleEntries: ruleCount(customRulesConfig),
+  checkerQueries: runCheckerQueriesExample(),
   distributedOrchestrator: runDistributedOrchestratorExample(),
   minimalStart: runMinimalStartExample(),
   mockClient: runMockClientExample(),

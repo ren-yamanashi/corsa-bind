@@ -36,6 +36,10 @@
       "types": "./dist/json_schema.d.ts",
       "import": "./dist/json_schema.js"
     },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js"
+    },
     "./rule-tester": {
       "types": "./dist/rule_tester.d.ts",
       "import": "./dist/rule_tester.js"

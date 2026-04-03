@@ -8,6 +8,7 @@ mod document;
 mod orchestrator;
 mod rule_predicates;
 mod util;
+mod utils;
 
 use napi_derive::napi;
 

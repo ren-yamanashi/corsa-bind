@@ -5,7 +5,12 @@ import {
   stripChainExpression,
 } from "./ast";
 import { createNativeRule } from "./rule_creator";
-import { classifyTypeText, isStringLikeNode, typeTextsAtNode } from "./type_utils";
+import {
+  classifyTypeText,
+  isStringLikeNode,
+  splitTopLevelTypeText,
+  typeTextsAtNode,
+} from "./type_utils";
 
 const knownSafeObjectTypes = new Set([
   "Date",
@@ -89,7 +94,7 @@ function isPossiblyBaseToString(context: any, node: any): boolean {
   if (typeTexts.length === 0) {
     return false;
   }
-  return typeTexts.some((text) => splitTopLevel(text, "|").some(isUnsafeStringifiedText));
+  return typeTexts.some((text) => splitTopLevelTypeText(text, "|").some(isUnsafeStringifiedText));
 }
 
 function isUnsafeStringifiedText(text: string): boolean {
@@ -132,70 +137,4 @@ function isUnsafeStringifiedText(text: string): boolean {
     return true;
   }
   return false;
-}
-
-function splitTopLevel(text: string, delimiter: string): readonly string[] {
-  const parts: string[] = [];
-  let angleDepth = 0;
-  let squareDepth = 0;
-  let parenDepth = 0;
-  let braceDepth = 0;
-  let quote: string | undefined;
-  let start = 0;
-
-  for (let index = 0; index < text.length; index += 1) {
-    const char = text[index]!;
-    if (quote) {
-      if (char === quote) {
-        quote = undefined;
-      }
-      continue;
-    }
-    switch (char) {
-      case "'":
-      case '"':
-      case "`":
-        quote = char;
-        break;
-      case "<":
-        angleDepth += 1;
-        break;
-      case ">":
-        angleDepth = Math.max(0, angleDepth - 1);
-        break;
-      case "[":
-        squareDepth += 1;
-        break;
-      case "]":
-        squareDepth = Math.max(0, squareDepth - 1);
-        break;
-      case "(":
-        parenDepth += 1;
-        break;
-      case ")":
-        parenDepth = Math.max(0, parenDepth - 1);
-        break;
-      case "{":
-        braceDepth += 1;
-        break;
-      case "}":
-        braceDepth = Math.max(0, braceDepth - 1);
-        break;
-      default:
-        if (
-          char === delimiter &&
-          angleDepth === 0 &&
-          squareDepth === 0 &&
-          parenDepth === 0 &&
-          braceDepth === 0
-        ) {
-          parts.push(text.slice(start, index).trim());
-          start = index + 1;
-        }
-        break;
-    }
-  }
-
-  parts.push(text.slice(start).trim());
-  return parts;
 }

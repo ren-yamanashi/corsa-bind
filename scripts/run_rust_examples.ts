@@ -9,6 +9,7 @@ const smokeExamples: readonly ExampleCommand[] = [
   { name: "minimal_start", args: ["run", "-p", "tsgo_rs", "--example", "minimal_start"] },
   { name: "virtual_document", args: ["run", "-p", "tsgo_rs", "--example", "virtual_document"] },
   { name: "mock_client", args: ["run", "-p", "tsgo_rs", "--example", "mock_client"] },
+  { name: "checker_queries", args: ["run", "-p", "tsgo_rs", "--example", "checker_queries"] },
   {
     name: "filesystem_callbacks",
     args: ["run", "-p", "tsgo_rs", "--example", "filesystem_callbacks"],
@@ -19,6 +20,7 @@ const smokeExamples: readonly ExampleCommand[] = [
     args: ["run", "-p", "tsgo_rs", "--example", "orchestrator_cache"],
   },
   { name: "observer_events", args: ["run", "-p", "tsgo_rs", "--example", "observer_events"] },
+  { name: "print_node_opt_in", args: ["run", "-p", "tsgo_rs", "--example", "print_node_opt_in"] },
 ];
 
 const realExamples: readonly ExampleCommand[] = [

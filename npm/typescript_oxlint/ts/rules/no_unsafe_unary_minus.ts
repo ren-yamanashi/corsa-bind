@@ -1,5 +1,5 @@
 import { createNativeRule } from "./rule_creator";
-import { classifyTypeText, typeTextsAtNode } from "./type_utils";
+import { classifyTypeText, splitTypeText, typeTextsAtNode } from "./type_utils";
 
 export const noUnsafeUnaryMinusRule = createNativeRule(
   "no-unsafe-unary-minus",
@@ -35,13 +35,6 @@ export const noUnsafeUnaryMinusRule = createNativeRule(
     },
   }),
 );
-
-function splitTypeText(text: string): readonly string[] {
-  return text
-    .split(/\s*[|&]\s*/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-}
 
 function isSafeLiteral(node: any): boolean {
   return (

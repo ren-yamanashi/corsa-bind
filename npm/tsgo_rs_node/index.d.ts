@@ -5,6 +5,17 @@
 
 export declare function isUnsafeAssignment(inputJson: string): boolean
 export declare function isUnsafeReturn(inputJson: string): boolean
+export declare function classifyTypeText(text?: string | undefined | null): string
+export declare function splitTopLevelTypeText(text: string, delimiter: string): Array<string>
+export declare function splitTypeText(text: string): Array<string>
+export declare function isStringLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isNumberLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isBigIntLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isAnyLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isUnknownLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isArrayLikeTypeTexts(typeTexts: Array<string>): boolean
+export declare function isPromiseLikeTypeTexts(typeTexts: Array<string>, propertyNames?: Array<string> | undefined | null): boolean
+export declare function isErrorLikeTypeTexts(typeTexts: Array<string>, propertyNames?: Array<string> | undefined | null): boolean
 /**
  * Returns the package version exposed by the native addon.
  *
