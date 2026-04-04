@@ -1,0 +1,102 @@
+use std::{
+    ffi::{CString, c_char},
+    ptr, slice,
+};
+
+use smallvec::SmallVec;
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
+pub struct CorsaStrRef {
+    pub ptr: *const u8,
+    pub len: usize,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Debug, Default)]
+pub struct CorsaString {
+    pub ptr: *mut c_char,
+    pub len: usize,
+}
+
+#[repr(C)]
+#[derive(Debug, Default)]
+pub struct CorsaStringList {
+    pub ptr: *mut CorsaString,
+    pub len: usize,
+}
+
+impl CorsaStrRef {
+    pub unsafe fn as_str<'a>(self) -> Option<&'a str> {
+        if self.ptr.is_null() || self.len == 0 {
+            return Some("");
+        }
+        let bytes = unsafe { slice::from_raw_parts(self.ptr, self.len) };
+        std::str::from_utf8(bytes).ok()
+    }
+}
+
+pub fn into_c_string(value: &str) -> CorsaString {
+    if value.is_empty() {
+        return CorsaString::default();
+    }
+    let cstring = CString::new(value).expect("utils outputs never contain interior NUL");
+    CorsaString {
+        len: value.len(),
+        ptr: cstring.into_raw(),
+    }
+}
+
+pub fn into_c_string_list(values: Vec<String>) -> CorsaStringList {
+    if values.is_empty() {
+        return CorsaStringList::default();
+    }
+    let boxed = values
+        .into_iter()
+        .map(|value| into_c_string(value.as_str()))
+        .collect::<Vec<_>>()
+        .into_boxed_slice();
+    let len = boxed.len();
+    CorsaStringList {
+        len,
+        ptr: Box::into_raw(boxed) as *mut CorsaString,
+    }
+}
+
+pub unsafe fn collect_strings<'a>(
+    ptr: *const CorsaStrRef,
+    len: usize,
+) -> Option<SmallVec<[&'a str; 8]>> {
+    if ptr.is_null() || len == 0 {
+        return Some(SmallVec::new());
+    }
+    let values = unsafe { slice::from_raw_parts(ptr, len) };
+    let mut collected = SmallVec::with_capacity(values.len());
+    for value in values {
+        let text = unsafe { value.as_str() }?;
+        collected.push(text);
+    }
+    Some(collected)
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn corsa_utils_string_free(value: CorsaString) {
+    if value.ptr.is_null() {
+        return;
+    }
+    let _ = unsafe { CString::from_raw(value.ptr) };
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn corsa_utils_string_list_free(value: CorsaStringList) {
+    if value.ptr.is_null() || value.len == 0 {
+        return;
+    }
+    let slice = ptr::slice_from_raw_parts_mut(value.ptr, value.len);
+    let boxed = unsafe { Box::from_raw(slice) };
+    for item in boxed.iter() {
+        unsafe {
+            corsa_utils_string_free(*item);
+        }
+    }
+}

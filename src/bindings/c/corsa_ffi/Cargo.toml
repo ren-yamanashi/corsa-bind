@@ -1,0 +1,19 @@
+[package]
+name = "corsa_ffi"
+version = "0.1.0"
+edition = "2024"
+description = "C ABI for corsa utils, intended as the shared base for multi-language bindings"
+publish = false
+documentation.workspace = true
+homepage.workspace = true
+license.workspace = true
+readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+corsa_core = { version = "0.1.0", path = "../../../core/corsa_core" }
+smallvec = { workspace = true }

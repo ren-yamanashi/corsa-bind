@@ -11,3 +11,7 @@ dist
 /ref/typescript-go/
 .DS_Store
 .cache
+src/bindings/moonbit/**/_build
+src/bindings/swift/**/.build
+src/bindings/csharp/**/bin
+src/bindings/csharp/**/obj

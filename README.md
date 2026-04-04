@@ -16,7 +16,7 @@ Rust bindings, orchestration layers, and Node bindings for `typescript-go` over 
 
 ## What This Is
 
-`corsa` is a multi-crate workspace for talking to `typescript-go` from Rust and Node.js without patching upstream.
+`corsa` is a multi-crate workspace for talking to `typescript-go` from Rust and Node.js without patching upstream, with a Rust-backed `utils` FFI layer that can also be reused from C-family and other native languages.
 
 In practice, that means:
 
@@ -33,6 +33,7 @@ Current focus:
 - stdio LSP bindings with virtual-file support
 - zero-cost-lean hot paths with msgpack-first defaults
 - `napi-rs` bindings that surface Rust performance to JS/TS authoring workflows
+- Rust-backed `utils` bindings for C, C++, Go, Zig, C#, Swift, and MoonBit
 - local multi-process orchestration, cache reuse, and experimental replicated state
 - strict upstream pinning by exact `typescript-go` commit
 - regression tests and benchmarks against the real pinned upstream server
@@ -72,6 +73,8 @@ Pinned upstream at the time of writing:
 - `corsa_runtime`: lightweight custom runtime and task primitives
 - `corsa_ref`: exact upstream pin, sync, and verification tooling
 - `corsa`: top-level facade crate, mock server, and native benchmark binaries
+- `src/bindings/c/corsa_ffi`: shared C ABI over the Rust `corsa_core::utils` surface
+- `src/bindings/cpp`, `src/bindings/go`, `src/bindings/zig`, `src/bindings/csharp`, `src/bindings/swift`, `src/bindings/moonbit`: thin language bindings layered on top of `corsa_ffi`
 - `src/bindings/nodejs/corsa_node`: `napi-rs` native bindings and the `@corsa/node` TypeScript wrapper package
 - `src/bindings/nodejs/typescript_oxlint`: `typescript-eslint`-style compatibility layer for type-aware Oxlint JS plugins
 - `bench`: Vitest benchmark project for the Node binding

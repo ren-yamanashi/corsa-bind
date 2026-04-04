@@ -1,0 +1,11 @@
+{
+  "supported-targets": ["native"],
+  "native-stub": ["cwrap.c"],
+  "link": {
+    "native": {
+      "cc": "clang",
+      "cc-flags": "-I../../../c/corsa_ffi/include",
+      "cc-link-flags": "-L../../../../target/debug -lcorsa_ffi"
+    }
+  }
+}

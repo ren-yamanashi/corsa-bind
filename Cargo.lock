@@ -127,6 +127,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "corsa_ffi"
+version = "0.1.0"
+dependencies = [
+ "corsa_core",
+ "smallvec",
+]
+
+[[package]]
 name = "corsa_jsonrpc"
 version = "0.1.0"
 dependencies = [
