@@ -106,7 +106,7 @@ describe("npm release utils", () => {
       main: "corsa_node.linux-x64-gnu.node",
       name: `${nodeBindingManifest.name}-linux-x64-gnu`,
       os: ["linux"],
-      version: "0.1.0",
+      version: nodeBindingManifest.version,
     });
   });
 
@@ -119,8 +119,8 @@ describe("npm release utils", () => {
 
     expect(manifest.files).not.toContain("*.node");
     expect(manifest.optionalDependencies).toEqual({
-      [`${nodeBindingManifest.name}-darwin-arm64`]: "0.1.0",
-      [`${nodeBindingManifest.name}-linux-x64-gnu`]: "0.1.0",
+      [`${nodeBindingManifest.name}-darwin-arm64`]: nodeBindingManifest.version,
+      [`${nodeBindingManifest.name}-linux-x64-gnu`]: nodeBindingManifest.version,
     });
   });
 });
