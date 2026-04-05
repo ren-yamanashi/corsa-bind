@@ -47,18 +47,15 @@ export default defineConfig({
   resolve: {
     alias: {
       "@corsa-bind/napi": resolve(nodePackageDir, "ts/index.ts"),
-      "oxlint-plugin-typescript-go/ast-utils": resolve(typescriptOxlintDir, "ts/ast_utils.ts"),
-      "oxlint-plugin-typescript-go/eslint-utils": resolve(
-        typescriptOxlintDir,
-        "ts/eslint_utils.ts",
-      ),
-      "oxlint-plugin-typescript-go/json-schema": resolve(typescriptOxlintDir, "ts/json_schema.ts"),
-      "oxlint-plugin-typescript-go/utils": resolve(typescriptOxlintDir, "ts/utils.ts"),
-      "oxlint-plugin-typescript-go/rule-tester": resolve(typescriptOxlintDir, "ts/rule_tester.ts"),
-      "oxlint-plugin-typescript-go/rules": resolve(typescriptOxlintDir, "ts/rules/index.ts"),
-      "oxlint-plugin-typescript-go/ts-eslint": resolve(typescriptOxlintDir, "ts/ts_eslint.ts"),
-      "oxlint-plugin-typescript-go/ts-estree": resolve(typescriptOxlintDir, "ts/ts_estree.ts"),
-      "oxlint-plugin-typescript-go": resolve(typescriptOxlintDir, "ts/index.ts"),
+      "corsa-oxlint/ast-utils": resolve(typescriptOxlintDir, "ts/ast_utils.ts"),
+      "corsa-oxlint/eslint-utils": resolve(typescriptOxlintDir, "ts/eslint_utils.ts"),
+      "corsa-oxlint/json-schema": resolve(typescriptOxlintDir, "ts/json_schema.ts"),
+      "corsa-oxlint/utils": resolve(typescriptOxlintDir, "ts/utils.ts"),
+      "corsa-oxlint/rule-tester": resolve(typescriptOxlintDir, "ts/rule_tester.ts"),
+      "corsa-oxlint/rules": resolve(typescriptOxlintDir, "ts/rules/index.ts"),
+      "corsa-oxlint/ts-eslint": resolve(typescriptOxlintDir, "ts/ts_eslint.ts"),
+      "corsa-oxlint/ts-estree": resolve(typescriptOxlintDir, "ts/ts_estree.ts"),
+      "corsa-oxlint": resolve(typescriptOxlintDir, "ts/index.ts"),
     },
   },
   lint: {

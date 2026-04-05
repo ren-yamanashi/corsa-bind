@@ -47,7 +47,7 @@ Current focus:
 - Fast-path bias: `CompactString`, `SmallVec`, `bumpalo`, `memchr`, `phf`, `FxHash`
 - JS toolchain: `pnpm` + Vite+ (`vp`) with `oxfmt` / `oxlint`
 - Repo automation: `scripts/*.ts` executed directly through Node `24` with `--strip-types`
-- Node bindings: `@corsa-bind/napi` (`src/bindings/nodejs/corsa_node`) and `oxlint-plugin-typescript-go` (`src/bindings/nodejs/typescript_oxlint`) (public npm packages that still expect a caller-managed `typescript-go` executable)
+- Node bindings: `@corsa-bind/napi` (`src/bindings/nodejs/corsa_node`) and `corsa-oxlint` (`src/bindings/nodejs/typescript_oxlint`) (public npm packages that still expect a caller-managed `typescript-go` executable)
 - Distributed orchestration: `experimental-distributed` cargo feature
 - TS benchmark project: `bench`
 - Example workspace: `examples`
@@ -116,7 +116,7 @@ still target Node `22+`.
 ## Examples
 
 The repository now ships executable examples for Rust, `@corsa-bind/napi`, and
-`oxlint-plugin-typescript-go` under [`examples/`](./examples/README.md), from
+`corsa-oxlint` under [`examples/`](./examples/README.md), from
 minimal virtual-document edits up through checker-query walkthroughs and
 opt-in upstream printer flows.
 
@@ -155,14 +155,14 @@ vp run -w examples_rust_experimental
 
 ## Type-Aware Oxlint
 
-`oxlint-plugin-typescript-go` lets us write Oxlint JS plugins with a familiar
+`corsa-oxlint` lets us write Oxlint JS plugins with a familiar
 `typescript-eslint` authoring model while sourcing type information from the
 pinned `tsgo` binary. The heavy lifting stays in Rust, then `napi-rs` binds
 that implementation into JS so end users can keep writing custom plugins and
 custom rules in JS/TS.
 
 ```ts
-import { ESLintUtils } from "oxlint-plugin-typescript-go";
+import { ESLintUtils } from "corsa-oxlint";
 
 const createRule = ESLintUtils.RuleCreator((name) => `https://example.com/rules/${name}`);
 
@@ -209,10 +209,10 @@ export const noStringPlusNumber = createRule({
 The rule-side type-aware config lives under `settings.typescriptOxlint`. Package
 details and caveats are documented in [`src/bindings/nodejs/typescript_oxlint/README.md`](./src/bindings/nodejs/typescript_oxlint/README.md).
 
-`oxlint-plugin-typescript-go/rules` exposes a TS-native type-aware rule set and plugin:
+`corsa-oxlint/rules` exposes a TS-native type-aware rule set and plugin:
 
 ```ts
-import { typescriptOxlintPlugin } from "oxlint-plugin-typescript-go/rules";
+import { typescriptOxlintPlugin } from "corsa-oxlint/rules";
 
 export default [
   {
@@ -263,8 +263,8 @@ The repo ships two benchmark layers:
 
 - Native Rust benchmark: `vp run -w bench_native`
 - Node binding benchmark: `vp run -w bench_ts`
-- `oxlint-plugin-typescript-go` checker benchmark: `vp test bench --config ./vite.config.ts bench/src/typescript_oxlint.bench.ts`
-- `oxlint-plugin-typescript-go` native-rule benchmark: `vp test bench --config ./vite.config.ts bench/src/typescript_oxlint_rules.bench.ts`
+- `corsa-oxlint` checker benchmark: `vp test bench --config ./vite.config.ts bench/src/typescript_oxlint.bench.ts`
+- `corsa-oxlint` native-rule benchmark: `vp test bench --config ./vite.config.ts bench/src/typescript_oxlint_rules.bench.ts`
 - Combined benchmark + budget guard: `vp run -w bench`
 
 The TS benchmark writes machine-readable output to `.cache/bench_ts.json`.

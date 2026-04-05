@@ -176,9 +176,7 @@ export class TsgoProjectSession {
     }
     const config = this.#config;
     if (!config) {
-      throw new Error(
-        `oxlint-plugin-typescript-go could not parse a tsgo config for ${this.project.configPath}`,
-      );
+      throw new Error(`corsa-oxlint could not parse a tsgo config for ${this.project.configPath}`);
     }
     return config;
   }
@@ -229,9 +227,7 @@ export class TsgoProjectSession {
   private projectId(): string {
     const id = this.#projects[0]?.id;
     if (!id) {
-      throw new Error(
-        `oxlint-plugin-typescript-go could not resolve a tsgo project for ${this.project.filename}`,
-      );
+      throw new Error(`corsa-oxlint could not resolve a tsgo project for ${this.project.filename}`);
     }
     return id;
   }

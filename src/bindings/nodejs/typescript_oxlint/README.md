@@ -1,6 +1,6 @@
-# oxlint-plugin-typescript-go
+# corsa-oxlint
 
-`oxlint-plugin-typescript-go` is a self-hosted `typescript-eslint`-style framework for
+`corsa-oxlint` is a self-hosted `typescript-eslint`-style framework for
 building Oxlint JS plugins with real type information powered by `tsgo`.
 
 > [!WARNING]
@@ -16,7 +16,7 @@ building Oxlint JS plugins with real type information powered by `tsgo`.
 - binds Rust-implemented hot paths into JS through `napi-rs`
 - lets custom Oxlint rules query types and symbols from JS or TS
 - ships a `RuleTester` wrapper that injects temp projects and type-aware config
-- ships a growing TS-native ruleset under `oxlint-plugin-typescript-go/rules`
+- ships a growing TS-native ruleset under `corsa-oxlint/rules`
 
 The design goal is simple: performance-critical pieces live in Rust, `napi-rs`
 bridges them into Node, and end users still get to author custom plugins and
@@ -25,11 +25,11 @@ custom rules in plain JS/TS.
 ## Configuration
 
 Oxlint does not expose arbitrary parser options at runtime, so
-`oxlint-plugin-typescript-go` reads its type-aware settings from
+`corsa-oxlint` reads its type-aware settings from
 `settings.typescriptOxlint`.
 
 ```ts
-import { ESLintUtils } from "oxlint-plugin-typescript-go";
+import { ESLintUtils } from "corsa-oxlint";
 
 const createRule = ESLintUtils.RuleCreator((name) => `https://example.com/rules/${name}`);
 
@@ -94,12 +94,12 @@ export default [
 
 ## Native Rules
 
-`oxlint-plugin-typescript-go/rules` exports the TS-native rule set and plugin surface.
+`corsa-oxlint/rules` exports the TS-native rule set and plugin surface.
 Rule parity is tracked against upstream `tsgolint/internal/rules`, but the
 runtime implementation lives entirely in this package.
 
 ```ts
-import { typescriptOxlintPlugin } from "oxlint-plugin-typescript-go/rules";
+import { typescriptOxlintPlugin } from "corsa-oxlint/rules";
 
 export default [
   {

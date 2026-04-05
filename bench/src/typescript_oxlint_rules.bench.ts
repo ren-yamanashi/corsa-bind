@@ -2,7 +2,7 @@ import { bench, describe } from "vitest";
 
 import type { ApiMode } from "@corsa-bind/napi";
 
-import { typescriptOxlintRules } from "oxlint-plugin-typescript-go/rules";
+import { typescriptOxlintRules } from "corsa-oxlint/rules";
 
 import {
   ensureBenchInputs,
@@ -30,7 +30,7 @@ const baseToStringNode = createBaseToStringNode();
 const startsWithNode = createStartsWithNode();
 
 for (const mode of ["msgpack", "jsonrpc"] as const) {
-  describe(`oxlint-plugin-typescript-go/rules ${mode}`, () => {
+  describe(`corsa-oxlint/rules ${mode}`, () => {
     const restrictContext = createContext(mode, [{ allowNumberAndString: false }]);
     const restrictVisitors = (typescriptOxlintRules["restrict-plus-operands"] as any).create(
       restrictContext,

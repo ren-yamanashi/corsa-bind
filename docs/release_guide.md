@@ -22,7 +22,7 @@ Internal Rust crates:
 Public npm packages:
 
 - `@corsa-bind/napi` (`src/bindings/nodejs/corsa_node`)
-- `oxlint-plugin-typescript-go` (`src/bindings/nodejs/typescript_oxlint`)
+- `corsa-oxlint` (`src/bindings/nodejs/typescript_oxlint`)
 
 The npm packages do not bundle the `typescript-go` executable. Consumers must
 point them at a compatible `tsgo` binary at runtime.
@@ -75,7 +75,7 @@ Publish npm packages in dependency order:
 7. `@corsa-bind/napi-linux-arm64-gnu`
 8. `@corsa-bind/napi-linux-arm64-musl`
 9. `@corsa-bind/napi`
-10. `oxlint-plugin-typescript-go`
+10. `corsa-oxlint`
 
 ## Tag Release Flow
 
@@ -133,7 +133,7 @@ Before publishing Rust crates:
 Before publishing npm packages, run the same gates plus a fresh `vp run -w build`.
 The GitHub publish workflow fan-outs native binding builds per target, downloads
 those `.node` artifacts into the publish job, and only then publishes the root
-package and `oxlint-plugin-typescript-go`.
+package and `corsa-oxlint`.
 
 ## Trusted Publishing
 
@@ -158,7 +158,7 @@ Publishing for each package with:
 
 Configure the same trusted publisher on:
 
-- `oxlint-plugin-typescript-go`
+- `corsa-oxlint`
 - `@corsa-bind/napi`
 - `@corsa-bind/napi-darwin-arm64`
 - `@corsa-bind/napi-darwin-x64`
@@ -215,7 +215,7 @@ auth_mode=token
 
 This manual CI run still builds every supported native artifact through the
 matrix, then publishes the binary packages first, the JS-only `@corsa-bind/napi`
-root package second, and `oxlint-plugin-typescript-go` last.
+root package second, and `corsa-oxlint` last.
 
 ### 4. Attach the Trusted Publishers
 
@@ -258,7 +258,7 @@ If a bootstrap publish partially succeeds, rerun from the first missing target:
 
 ```bash
 CARGO_PUBLISH_START_AT=corsa node --strip-types ./scripts/publish_rust.ts
-NPM_PUBLISH_START_AT=oxlint-plugin-typescript-go NAPI_ARTIFACTS_DIR=./artifacts node --strip-types ./scripts/publish_npm.ts
+NPM_PUBLISH_START_AT=corsa-oxlint NAPI_ARTIFACTS_DIR=./artifacts node --strip-types ./scripts/publish_npm.ts
 ```
 
 ## Changelog Expectations

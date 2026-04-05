@@ -96,7 +96,7 @@ export const nodeBindingPackage: PublishablePackage = {
 };
 
 export const typescriptOxlintPackage: PublishablePackage = {
-  name: "oxlint-plugin-typescript-go",
+  name: "corsa-oxlint",
   path: resolve(rootDir, "src/bindings/nodejs/typescript_oxlint"),
 };
 

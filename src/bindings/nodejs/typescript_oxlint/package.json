@@ -1,5 +1,5 @@
 {
-  "name": "oxlint-plugin-typescript-go",
+  "name": "corsa-oxlint",
   "version": "0.1.0",
   "description": "typescript-eslint-style Oxlint helpers powered by corsa and typescript-go",
   "homepage": "https://github.com/ubugeeei/corsa-bind/tree/main/src/bindings/nodejs/typescript_oxlint",

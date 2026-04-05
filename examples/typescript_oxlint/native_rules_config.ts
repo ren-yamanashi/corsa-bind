@@ -1,4 +1,4 @@
-import { typescriptOxlintPlugin } from "oxlint-plugin-typescript-go/rules";
+import { typescriptOxlintPlugin } from "corsa-oxlint/rules";
 
 import { createExampleParserOptions } from "./shared.ts";
 

@@ -4,7 +4,7 @@ These examples are split into three groups:
 
 - `examples/nodejs/*`: executable `@corsa-bind/napi` samples
 - `examples/rust/*`: executable Rust samples
-- `examples/typescript_oxlint/*`: reusable `oxlint-plugin-typescript-go` rule/plugin/config samples
+- `examples/typescript_oxlint/*`: reusable `corsa-oxlint` rule/plugin/config samples
 
 If you are picking a first example, use this quick map:
 
@@ -138,7 +138,7 @@ Run it with:
 cargo run -p corsa --features experimental-distributed --example distributed_orchestrator
 ```
 
-## `oxlint-plugin-typescript-go` Examples
+## `corsa-oxlint` Examples
 
 - `examples/typescript_oxlint/custom_rule.ts`: custom type-aware rule using `ESLintUtils.getParserServices()`
 - `examples/typescript_oxlint/custom_plugin.ts`: plugin wrapper around the custom rule

@@ -3,6 +3,6 @@
   "private": true,
   "dependencies": {
     "@corsa-bind/napi": "workspace:*",
-    "oxlint-plugin-typescript-go": "workspace:*"
+    "corsa-oxlint": "workspace:*"
   }
 }

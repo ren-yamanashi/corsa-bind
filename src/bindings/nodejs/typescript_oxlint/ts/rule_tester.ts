@@ -66,7 +66,7 @@ export class RuleTester {
   }
 
   run(ruleName: string, rule: Record<string, unknown>, tests: TestCases): void {
-    const workspace = mkdtempSync(join(tmpdir(), "oxlint-plugin-typescript-go-"));
+    const workspace = mkdtempSync(join(tmpdir(), "corsa-oxlint-"));
     registerCleanup(workspace);
     const transformed = {
       valid: tests.valid.map((test) => prepareTestCase(workspace, test, this.#config)),

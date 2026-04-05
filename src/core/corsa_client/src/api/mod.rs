@@ -24,12 +24,15 @@ mod methods_symbols;
 mod methods_types;
 mod msgpack_codec;
 mod msgpack_worker;
+mod project_session;
+mod project_session_probe;
 mod requests_core;
 mod requests_symbols;
 mod requests_types;
 mod responses;
 mod snapshot;
 mod spawn_stdio;
+mod type_probe;
 
 /// Filesystem callback traits and helper functions used by spawned workers.
 pub use callbacks::{
@@ -50,6 +53,8 @@ pub use encoded::{EncodedPayload, PrintNodeOptions};
 pub use handles::{
     NodeHandle, ProjectHandle, SignatureHandle, SnapshotHandle, SymbolHandle, TypeHandle,
 };
+/// Session wrapper that keeps a snapshot and default project alive.
+pub use project_session::ProjectSession;
 /// Common response payloads returned by the API.
 pub use responses::{
     ConfigResponse, IndexInfo, InitializeResponse, ProjectResponse, SignatureResponse,
@@ -57,3 +62,5 @@ pub use responses::{
 };
 /// Auto-releasing snapshot wrapper.
 pub use snapshot::ManagedSnapshot;
+/// Higher-level checker probe models built from repeated project-session queries.
+pub use type_probe::{TypeProbe, TypeProbeOptions};

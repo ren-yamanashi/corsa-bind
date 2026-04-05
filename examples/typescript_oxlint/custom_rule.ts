@@ -1,4 +1,4 @@
-import { ESLintUtils } from "oxlint-plugin-typescript-go";
+import { ESLintUtils } from "corsa-oxlint";
 
 const createRule = ESLintUtils.RuleCreator(
   (name) =>

@@ -32,7 +32,7 @@ importers:
       '@corsa-bind/napi':
         specifier: workspace:*
         version: link:../src/bindings/nodejs/corsa_node
-      oxlint-plugin-typescript-go:
+      corsa-oxlint:
         specifier: workspace:*
         version: link:../src/bindings/nodejs/typescript_oxlint
 
@@ -41,7 +41,7 @@ importers:
       '@corsa-bind/napi':
         specifier: workspace:*
         version: link:../src/bindings/nodejs/corsa_node
-      oxlint-plugin-typescript-go:
+      corsa-oxlint:
         specifier: workspace:*
         version: link:../src/bindings/nodejs/typescript_oxlint
 

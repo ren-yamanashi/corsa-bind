@@ -1,4 +1,4 @@
-import { definePlugin } from "oxlint-plugin-typescript-go";
+import { definePlugin } from "corsa-oxlint";
 
 import { noStringPlusNumberRule } from "./custom_rule.ts";
 
