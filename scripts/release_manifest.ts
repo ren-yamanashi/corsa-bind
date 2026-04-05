@@ -65,6 +65,13 @@ export const rustReleaseCrates: readonly RustReleaseCrate[] = [
     publish: "internal",
   },
   {
+    name: "corsa_ffi",
+    manifestPath: "src/bindings/c/corsa_ffi/Cargo.toml",
+    packagePath: "src/bindings/c/corsa_ffi",
+    patches: ["corsa_client", "corsa_core", "corsa_lsp", "corsa_runtime"],
+    publish: "internal",
+  },
+  {
     name: "corsa",
     manifestPath: "src/bindings/rust/corsa/Cargo.toml",
     packagePath: "src/bindings/rust/corsa",
@@ -147,7 +154,8 @@ function updateCargoManifest(manifestPath: string, nextVersion: string): boolean
     `^(\\s*(?:${workspaceCrateNames.map(escapeRegex).join("|")})\\s*=\\s*\\{.*\\bversion\\s*=\\s*")([^"]+)(".*\\}\\s*)$`,
   );
 
-  const lines = readText(manifestPath).split(/\r?\n/);
+  const contents = readText(manifestPath).replace(/\r\n/g, "\n");
+  const lines = contents.endsWith("\n") ? contents.slice(0, -1).split("\n") : contents.split("\n");
   let changed = false;
   let inPackageSection = false;
 
@@ -161,12 +169,22 @@ function updateCargoManifest(manifestPath: string, nextVersion: string): boolean
       return line;
     }
 
-    if (inPackageSection && /^\s*version\s*=\s*"([^"]+)"\s*$/.test(line)) {
+    const packageVersionMatch = inPackageSection
+      ? line.match(/^\s*version\s*=\s*"([^"]+)"\s*$/)
+      : null;
+    if (packageVersionMatch) {
+      if (packageVersionMatch[1] === nextVersion) {
+        return line;
+      }
       changed = true;
       return line.replace(/(^\s*version\s*=\s*")([^"]+)("\s*$)/, `$1${nextVersion}$3`);
     }
 
-    if (dependencyPattern.test(line)) {
+    const dependencyMatch = line.match(dependencyPattern);
+    if (dependencyMatch) {
+      if (dependencyMatch[2] === nextVersion) {
+        return line;
+      }
       changed = true;
       return line.replace(dependencyPattern, `$1${nextVersion}$3`);
     }

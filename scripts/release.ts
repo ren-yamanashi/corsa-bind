@@ -19,6 +19,7 @@ const gitCommand = "git";
 const vpCommand = process.platform === "win32" ? "vp.cmd" : "vp";
 const defaultRemote = "origin";
 const defaultBranch = "main";
+const cratesIoUserAgent = "corsa-release-script";
 const gitNoPromptEnv = {
   ...process.env,
   GIT_TERMINAL_PROMPT: "0",
@@ -143,7 +144,11 @@ function assertTagAbsent(remote: string, tag: string): void {
 }
 
 async function doesCrateExist(crateName: string): Promise<boolean> {
-  const response = await fetch(`https://crates.io/api/v1/crates/${crateName}`);
+  const response = await fetch(`https://crates.io/api/v1/crates/${crateName}`, {
+    headers: {
+      "user-agent": cratesIoUserAgent,
+    },
+  });
   if (response.status === 404) {
     return false;
   }
