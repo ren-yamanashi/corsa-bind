@@ -19,9 +19,11 @@ If you are picking a first example, use this quick map:
 
 ## Prerequisites
 
-Build the workspace packages and native bindings first:
+Enter the Nix dev shell, let Vite+ provision Node, then build the workspace
+packages and native bindings first:
 
 ```bash
+nix develop
 vp install
 vp run -w build
 ```

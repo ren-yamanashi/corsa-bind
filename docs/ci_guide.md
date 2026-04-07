@@ -87,14 +87,29 @@ The `bench-tsgo-ref` job keeps the heavier Ubuntu-only path:
 
 The easiest local reproduction path is a shell that provides:
 
-- `node 24`
-- `pnpm`
+- `vp` for Vite+, Node `24`, and package-manager access
+- `rust 1.85+`
 - `go 1.26`
+- the native-language toolchains under `src/bindings` (`clang`, `zig`, `dotnet`, `swift`, `moon`)
 
-In this repository, the most reliable one-shot reproduction command is:
+This repository now ships a `flake.nix` for that environment.
+The generated flake comes from a thin `tnix` entrypoint in
+[`../flake.tnix`](../flake.tnix), with the heavier outputs implementation kept
+in plain Nix under [`../nix/flake-outputs.nix`](../nix/flake-outputs.nix) to
+avoid current `tnix` limitations. A short summary of those constraints lives in
+[`tnix_notes.md`](./tnix_notes.md).
+
+The most reliable interactive path is:
 
 ```bash
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
+nix develop
+vp check
+```
+
+The most reliable one-shot reproduction command is:
+
+```bash
+nix develop -c sh -c 'vp check'
 ```
 
 The same pattern works for the rest of the CI commands.
@@ -102,9 +117,9 @@ The same pattern works for the rest of the CI commands.
 Examples:
 
 ```bash
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
+nix develop -c sh -c 'vp run -w build'
+nix develop -c sh -c 'vp run -w test'
+nix develop -c sh -c 'vp run -w bench_verify'
 ```
 
 Using `sh -c` instead of a login shell matters here.
@@ -115,16 +130,16 @@ It makes the tool resolution deterministic, especially for `go`, which would oth
 This sequence mirrors the current CI most closely:
 
 ```bash
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp check'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo fmt --all --check'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'cargo clippy --workspace --all-targets -- -D warnings'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w test'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w sync_ref'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w verify_ref'
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w build_tsgo'
+nix develop -c sh -c 'vp check'
+nix develop -c sh -c 'cargo fmt --all --check'
+nix develop -c sh -c 'cargo clippy --workspace --all-targets -- -D warnings'
+nix develop -c sh -c 'vp run -w build'
+nix develop -c sh -c 'vp run -w test'
+nix develop -c sh -c 'vp run -w sync_ref'
+nix develop -c sh -c 'vp run -w verify_ref'
+nix develop -c sh -c 'vp run -w build_tsgo'
 cargo test -p corsa --test real_tsgo_baseline --test real_tsgo_regression
-nix shell nixpkgs#nodejs_24 nixpkgs#pnpm nixpkgs#go_1_26 -c sh -c 'vp run -w bench_verify'
+nix develop -c sh -c 'vp run -w bench_verify'
 ```
 
 This Node `24` baseline matters because the repository now executes
@@ -329,7 +344,7 @@ Check:
 - whether the shell actually exposes Go 1.26
 - whether CI is using `actions/setup-go` with `ref/typescript-go/go.mod`
 
-If a login shell is overriding the toolchain, prefer the `nix shell ... -c sh -c '...'` pattern.
+If a login shell is overriding the toolchain, prefer the `nix develop -c sh -c '...'` pattern.
 
 ## `build_tsgo` fails with a cache permission error
 

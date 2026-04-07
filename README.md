@@ -45,7 +45,7 @@ Current focus:
 - Default API transport: `SyncMsgpackStdio`
 - Runtime: custom in-house runtime, no `tokio`
 - Fast-path bias: `CompactString`, `SmallVec`, `bumpalo`, `memchr`, `phf`, `FxHash`
-- JS toolchain: `pnpm` + Vite+ (`vp`) with `oxfmt` / `oxlint`
+- JS toolchain: Vite+ (`vp`) with vp-managed Node `24`, pnpm `10`, `oxfmt`, and `oxlint`
 - Repo automation: `scripts/*.ts` executed directly through Node `24` with `--strip-types`
 - Node bindings: `@corsa-bind/napi` (`src/bindings/nodejs/corsa_node`) and `corsa-oxlint` (`src/bindings/nodejs/typescript_oxlint`) (public npm packages that still expect a caller-managed `typescript-go` executable)
 - Distributed orchestration: `experimental-distributed` cargo feature
@@ -94,6 +94,28 @@ vp run -w release minor
 
 ## Quick Start
 
+Enter the Nix dev shell first. It includes the toolchains for every binding
+target under `src/bindings`:
+
+```bash
+nix develop
+vp install
+```
+
+The Nix shell itself is authored in [`flake.tnix`](./flake.tnix) and compiled
+to [`flake.nix`](./flake.nix) with `tnix`:
+
+```bash
+tnix check-project .
+tnix compile ./flake.tnix -o ./flake.nix
+```
+
+`flake.tnix` is intentionally kept as a thin `tnix` entrypoint, while the full
+outputs implementation lives in [`nix/flake-outputs.nix`](./nix/flake-outputs.nix).
+That split avoids current `tnix` edges around some larger flake constructs.
+See [docs/tnix_notes.md](./docs/tnix_notes.md) for the current limitations and
+the reasoning behind the layout.
+
 Sync and verify the pinned upstream checkout:
 
 ```bash
@@ -101,7 +123,7 @@ vp run -w sync_ref
 vp run -w verify_ref
 ```
 
-Install JS dependencies and build everything through Vite Task:
+Build everything through Vite+:
 
 ```bash
 vp install

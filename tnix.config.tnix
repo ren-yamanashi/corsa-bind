@@ -1,0 +1,15 @@
+{
+  name = "corsa-bind";
+  sourceDir = ./.;
+  entry = ./flake.tnix;
+  declarationDir = ./types/tnix;
+  declarationPacks = [];
+  buildDir = ./dist/tnix;
+  generatedDeclarationDir = ./dist/tnix/types;
+  entries = [
+    ./flake.tnix
+  ];
+  include = [];
+  exclude = [];
+  builtins = true;
+}
